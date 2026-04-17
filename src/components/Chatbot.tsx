@@ -79,7 +79,7 @@ CRITICAL RULE: If the user explicitly or implicitly asks about or suggests anyth
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 p-4 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full shadow-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors z-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 outline-none"
+        className="fixed bottom-32 right-6 p-4 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full shadow-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors z-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 outline-none"
         aria-label="Open Chat Assistant"
       >
         <MessageSquare className="w-6 h-6" />
@@ -93,7 +93,7 @@ CRITICAL RULE: If the user explicitly or implicitly asks about or suggests anyth
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 w-[90vw] sm:w-[380px] h-[550px] max-h-[80vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl flex flex-col z-50 overflow-hidden"
+            className="fixed bottom-32 right-6 w-[90vw] sm:w-[380px] h-[550px] max-h-[80vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl flex flex-col z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="bg-indigo-600 dark:bg-indigo-800 text-white p-4 flex justify-between items-center shadow-md z-10 shrink-0">

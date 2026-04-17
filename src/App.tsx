@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Terminal, Github, ExternalLink, Activity, Database, Cpu, Network, ArrowRight, Bot, Search, UserCheck, ChevronDown, ArrowUp, Sun, Moon, ShieldCheck, Target, Layers, Menu, X } from 'lucide-react';
+import { Terminal, Github, ExternalLink, Activity, Database, Cpu, Network, ArrowRight, Bot, Search, UserCheck, ChevronDown, ArrowUp, Sun, Moon, ShieldCheck, Target, Layers, Menu, X, Command, CornerDownLeft, Mail } from 'lucide-react';
 import { Chatbot } from './components/Chatbot';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -15,7 +15,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 const PORTFOLIO = {
   name: "JOEL ABRAHAM",
   title: "AI-AUGMENTED SOFTWARE ENGINEER",
-  manifesto: "I direct AI models as highly capable execution engines. My expertise lies in designing robust system architectures, defining strict data schemas, and crafting comprehensive test suites. By meticulously guiding agents through well-defined constraints, I transform high-level concepts into production-ready software with unprecedented velocity.",
+  manifesto: "I build production software by directing AI agents through rigorous constraints - architecture, schemas, and test suites I define up front. The agents ship the code; the design discipline is mine. The result is high-velocity engineering without the hallucination tax: systems that pass their tests, survive their audits, and hold up under real users.",
   email: "hire.joel.abraham@gmail.com",
   github: "https://github.com/JoelA510",
   linkedin: "https://linkedin.com/in/joel-abraham-cv",
@@ -571,7 +571,7 @@ const ProjectCard = ({ project, index }: { project: typeof PROJECTS[0], index: n
       </button>
 
       {/* Preview Area */}
-      <div className="flex-grow bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl relative overflow-hidden flex flex-col min-h-[300px] sm:min-h-[360px] mt-2 mb-4">
+      <div className="flex-grow bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl relative overflow-hidden flex flex-col min-h-[360px] sm:min-h-[500px] lg:min-h-[600px] mt-2 mb-4">
         {/* Window Controls */}
         <div role="group" aria-label="Project view options" className="border-b border-slate-200 dark:border-slate-800 flex flex-wrap gap-2 px-3 py-2 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
            <button 
@@ -702,7 +702,203 @@ const ProjectCard = ({ project, index }: { project: typeof PROJECTS[0], index: n
   )
 }
 
-const Sidebar = ({ theme, toggleTheme, isMobileOpen, setIsMobileOpen }: { theme: 'light' | 'dark', toggleTheme: () => void, isMobileOpen: boolean, setIsMobileOpen: (v: boolean) => void }) => (
+const CommandPalette = ({ 
+  isOpen, 
+  onClose, 
+  projects, 
+  theme, 
+  toggleTheme, 
+  email 
+}: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  projects: typeof PROJECTS, 
+  theme: 'light' | 'dark', 
+  toggleTheme: () => void, 
+  email: string 
+}) => {
+  const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filteredItems = [
+    ...projects.map(p => ({
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      type: 'project' as const,
+      action: () => {
+        const node = document.getElementById(p.id);
+        if (node) {
+          node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const btn = document.getElementById(`toggle-${p.id}`);
+          if (btn) btn.focus({ preventScroll: true });
+        }
+        onClose();
+      }
+    })),
+    {
+      id: 'toggle-theme',
+      title: 'Toggle theme',
+      description: `Switch to ${theme === 'light' ? 'dark' : 'light'} mode`,
+      type: 'action' as const,
+      icon: theme === 'light' ? Moon : Sun,
+      action: () => {
+        toggleTheme();
+        onClose();
+      }
+    },
+    {
+      id: 'email-joel',
+      title: 'Email Joel',
+      description: email,
+      type: 'action' as const,
+      icon: Mail,
+      action: () => {
+        window.location.href = `mailto:${email}`;
+        onClose();
+      }
+    }
+  ].filter(item => 
+    item.title.toLowerCase().includes(query.toLowerCase()) || 
+    item.description.toLowerCase().includes(query.toLowerCase())
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setQuery('');
+      setSelectedIndex(0);
+      setTimeout(() => inputRef.current?.focus(), 10);
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev + 1) % filteredItems.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev - 1 + filteredItems.length) % filteredItems.length);
+    } else if (e.key === 'Enter') {
+      filteredItems[selectedIndex]?.action();
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-4">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
+          />
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col"
+          >
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <Command className="w-5 h-5 text-slate-400" />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Jump to project, toggle theme, or link out..."
+                className="flex-1 bg-transparent border-none outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm py-1"
+              />
+              <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-[10px] font-mono font-medium text-slate-500">
+                esc
+              </div>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin">
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item, idx) => (
+                  <button
+                    key={item.id}
+                    onClick={item.action}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all text-left ${
+                      idx === selectedIndex 
+                        ? 'bg-slate-100 dark:bg-slate-800' 
+                        : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4 overflow-hidden">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm border ${
+                        idx === selectedIndex 
+                          ? 'bg-white dark:bg-slate-700 border-indigo-200 dark:border-indigo-900/50' 
+                          : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+                      }`}>
+                        {item.type === 'project' ? (
+                          <ArrowRight className={`w-4 h-4 ${idx === selectedIndex ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                        ) : (
+                          <item.icon className={`w-4 h-4 ${idx === selectedIndex ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                        )}
+                      </div>
+                      <div className="overflow-hidden">
+                        <div className={`font-bold text-sm ${idx === selectedIndex ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-slate-100'}`}>
+                          {item.title}
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                          {item.description}
+                        </div>
+                      </div>
+                    </div>
+                    {idx === selectedIndex && (
+                      <CornerDownLeft className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-4" />
+                    )}
+                  </button>
+                ))
+              ) : (
+                <div className="p-10 text-center text-slate-500 dark:text-slate-400">
+                  No items found for "{query}"
+                </div>
+              )}
+            </div>
+
+            <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center gap-6 text-[11px] text-slate-500 font-mono">
+              <div className="flex items-center gap-1.5">
+                <span className="px-1 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400">↑↓</span>
+                navigate
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="px-1 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400">↵</span>
+                select
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="px-1 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400">esc</span>
+                close
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const Sidebar = ({ 
+  theme, 
+  toggleTheme, 
+  isMobileOpen, 
+  setIsMobileOpen,
+  onPaletteToggle 
+}: { 
+  theme: 'light' | 'dark', 
+  toggleTheme: () => void, 
+  isMobileOpen: boolean, 
+  setIsMobileOpen: (v: boolean) => void,
+  onPaletteToggle: () => void
+}) => (
   <>
     {/* Mobile Overlay */}
     <AnimatePresence>
@@ -811,13 +1007,23 @@ const Sidebar = ({ theme, toggleTheme, isMobileOpen, setIsMobileOpen }: { theme:
             {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <a href={PORTFOLIO.github} className="group flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 rounded outline-none">
             GitHub
           </a>
           <a href={PORTFOLIO.linkedin} className="group flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 rounded outline-none">
             LinkedIn
           </a>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={onPaletteToggle}
+              aria-label="Open Command Palette"
+              className="flex items-center gap-0.5 px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-white dark:hover:bg-slate-700/50 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500 outline-none"
+            >
+              <Command className="w-2.5 h-2.5" />
+              K
+            </button>
+          </div>
         </div>
       </div>
     </motion.aside>
@@ -827,6 +1033,7 @@ const Sidebar = ({ theme, toggleTheme, isMobileOpen, setIsMobileOpen }: { theme:
 export default function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -837,6 +1044,17 @@ export default function App() {
     const computedTheme = localTheme === 'dark' || (!localTheme && isDark) ? 'dark' : 'light';
     setTheme(computedTheme);
     if (computedTheme === 'dark') document.documentElement.classList.add('dark');
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const toggleTheme = () => {
@@ -883,7 +1101,13 @@ export default function App() {
       </div>
 
       <div className="md:w-[380px] shrink-0 z-40 relative md:bg-white md:dark:bg-slate-900 transition-colors duration-500">
-        <Sidebar theme={theme} toggleTheme={toggleTheme} isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
+        <Sidebar 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+          isMobileOpen={isMobileMenuOpen} 
+          setIsMobileOpen={setIsMobileMenuOpen} 
+          onPaletteToggle={() => setIsCommandPaletteOpen(true)}
+        />
       </div>
       <div className="flex-1 flex flex-col min-w-0 z-10 relative">
         <motion.main 
@@ -892,7 +1116,17 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10"
         >
-          <div className="max-w-5xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8 items-start">
+          <div className="max-w-4xl mx-auto flex flex-col gap-10 md:gap-14 items-stretch pb-10">
+            <div className="mb-2 md:mb-6">
+              <div className="font-mono text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-4 md:mb-6 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse"></span>
+                $ ls ~/work --selected
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.15] md:leading-[1.15]">
+                Production software, architected with<br className="hidden md:block"/> AI as the <span className="font-mono text-cyan-600 dark:text-cyan-400 font-medium tracking-normal">execution_layer</span>.
+              </h1>
+            </div>
+
             {PROJECTS.map((project, idx) => (
               <ErrorBoundary key={project.id}>
                 <ProjectCard project={project} index={idx} />
@@ -906,15 +1140,17 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="sticky bottom-0 z-40 border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-6 md:px-10 py-4 flex flex-col xl:flex-row justify-center xl:justify-between items-center gap-4 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-500 h-auto md:h-[136px] xl:h-[84px]"
         >
-          <div className="text-center xl:text-left">&copy; {currentTime.getFullYear()} {PORTFOLIO.name}</div>
+          <div className="flex flex-col xl:flex-row items-center xl:items-baseline gap-2 xl:gap-8">
+            <div className="text-center xl:text-left">&copy; {currentTime.getFullYear()} {PORTFOLIO.name}</div>
+            <span className="font-mono text-[10px] sm:text-xs tabular-nums text-slate-400 dark:text-slate-500 text-center">
+               Current as of {currentTime.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
+          </div>
           <a href={PORTFOLIO.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn profile" className="flex items-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 rounded outline-none p-1 -m-1">
             <span className="inline-block w-2 h-2 bg-emerald-500 dark:bg-emerald-400 rounded-full mr-2 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></span>
             Available for Technical Partnerships
           </a>
-          <div className="flex items-center gap-4">
-             <span className="font-mono text-[10px] sm:text-xs tabular-nums text-slate-500 dark:text-slate-500 text-center">
-               Current as of {currentTime.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-             </span>
+          <div className="flex items-center">
              <AnimatePresence>
                {showScrollTop && (
                  <motion.button 
@@ -933,6 +1169,14 @@ export default function App() {
         </motion.footer>
       </div>
       <Chatbot />
+      <CommandPalette 
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        projects={PROJECTS}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        email={PORTFOLIO.email}
+      />
     </div>
   );
 }
