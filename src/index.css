@@ -156,9 +156,17 @@
     .best-foot-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     @media (max-width: 900px) {
-      #root { flex-direction: column; height: auto; }
+      /* On mobile, main content (hero, projects) leads — sidebar drops below.
+         Without this reverse, a phone visitor scrolls past identity + pipeline
+         glyph + chat + nav + socials before reaching the hero. */
+      #root { flex-direction: column-reverse; height: auto; }
       body { overflow: auto; }
-      .best-sidebar { width: 100%; border-right: 0; border-bottom: 1px solid var(--line); }
+      .best-sidebar {
+        width: 100%;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 0;
+      }
       .best-main { height: auto !important; max-height: none !important; }
     }
 
@@ -1267,3 +1275,109 @@
       transition: all .2s;
     }
     .best-term-hint:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─────────────── preview: fullscreen + click-to-interact overlay ─────────────── */
+    .best-preview-fs {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      border-radius: 6px;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+      padding: 0;
+    }
+    .best-preview-fs:hover { border-color: var(--accent); color: var(--accent); }
+    /* Tap overlay shown until the user clicks to interact. While visible the
+       iframe has pointer-events: none so mousewheel passes through to the page. */
+    .best-preview-tap {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px;
+      background: linear-gradient(0deg, oklch(0 0 0 / 0.18), oklch(0 0 0 / 0.05));
+      color: var(--ink);
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      transition: background .2s;
+    }
+    .best-preview-tap:hover { background: linear-gradient(0deg, oklch(0 0 0 / 0.28), oklch(0 0 0 / 0.1)); }
+    .best-preview-tap-icon {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--line);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      font-size: 16px;
+      box-shadow: 0 4px 18px oklch(0 0 0 / 0.25);
+    }
+    .best-preview-tap-hint {
+      padding: 5px 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      letter-spacing: 0.3px;
+    }
+    /* Release pill shown while interactive — reminds the user how to exit. */
+    .best-preview-release {
+      position: absolute; bottom: 10px; right: 10px;
+      padding: 5px 10px 5px 7px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer;
+      transition: all .2s;
+      z-index: 2;
+    }
+    .best-preview-release:hover { border-color: var(--accent); color: var(--accent); }
+    .best-preview-release kbd {
+      padding: 1px 5px;
+      background: var(--card-2);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 9.5px;
+      color: var(--ink);
+    }
+    /* Fullscreen sizing: when the Fullscreen API promotes .best-preview to the
+       top layer, stretch children to fill the viewport. */
+    .best-preview:fullscreen { background: var(--card-2); }
+    .best-preview:fullscreen .best-preview-body { flex: 1; }
+    .best-preview:fullscreen iframe { height: 100%; }
+
+    /* On mobile the preview body gets a taller minimum so the fullscreen button
+       doesn't land right next to content the user is trying to read. */
+    @media (max-width: 640px) {
+      .best-preview-body { min-height: 320px; }
+      .best-preview-tap-hint { font-size: 10px; padding: 4px 10px; }
+    }
+
+    /* ─────────────── reduced motion ─────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      /* Kill all animations and transitions across the site. Per WCAG 2.3.3 +
+         general courtesy for vestibular disorders. We keep a 0.01ms duration
+         rather than 0 so any transition-end handlers still fire. */
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Explicitly freeze effects built from transforms or state toggles. */
+      .best-pipeline-auto { animation: none !important; }
+      .best-hero { transform: none !important; }
+      .best-morph { opacity: 1 !important; filter: none !important; }
+      .best-ticker-track { animation: none !important; }
+    }
