@@ -89,6 +89,9 @@ export function SidebarChat() {
       if (!res.body) throw new Error("no response body");
 
       // Stream parse. The server sends one JSON object per SSE event.
+      // SSE spec allows \n, \r, or \r\n between events / lines.
+      const EVENT_SEPARATOR = /\r?\n\r?\n/;
+      const LINE_SEPARATOR = /\r?\n/;
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let pending = "";
@@ -99,10 +102,10 @@ export function SidebarChat() {
         const { done, value } = await reader.read();
         if (done) break;
         pending += decoder.decode(value, { stream: true });
-        const events = pending.split("\n\n");
+        const events = pending.split(EVENT_SEPARATOR);
         pending = events.pop() ?? "";
         for (const event of events) {
-          for (const line of event.split("\n")) {
+          for (const line of event.split(LINE_SEPARATOR)) {
             const trimmed = line.trim();
             if (!trimmed.startsWith("data:")) continue;
             const payload = trimmed.slice(5).trim();

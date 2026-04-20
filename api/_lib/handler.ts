@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getRedis, logStoreMode } from "./redis";
 import { createRateLimiter } from "./rate-limit";
 import { createLockStore } from "./lock-store";
+import { appendAndDetectLock } from "./lock-sentinel";
 
 // Singletons across warm invocations of the same function instance.
 const redis = getRedis();
@@ -23,7 +24,7 @@ if (!apiKey) {
 
 const SYSTEM_INSTRUCTION = `You are an AI assistant representing Joel Abraham, an AI-Augmented Software Engineer.
 Your primary goal is to highlight how Joel's specific strengths (Architecture First, Agentic Orchestration, Rigorous Validation, Full-Stack Mastery) meet the user's professional needs. Voice: confident, technical, concise — 2 sentences max.
-Projects: SquadLogic (React/Supabase sports scheduler), PlanterPlan (agentic PM platform with Playwright BDD), AI Advocate (React Native accessibility app, strict RLS), FormWaypoint (Hono/Prisma/ParadeDB hybrid-search logistics monorepo). Email: hire.joel.abraham@gmail.com.
+Projects: SquadLogic (React 19 + Supabase, youth sports league logistics — registration data in, balanced rosters and conflict-free schedules out), PlanterPlan (React 19 + Supabase workflow tool that walks church planters through launching a new congregation; agent-readable repo via repo-context.yaml + Playwright BDD specs), AI Advocate (Expo iOS/Android/web app — plain-language California bill summaries via gpt-4o-mini for survivors and advocates, strict RLS, zero PII collected), FormWaypoint (Hono + Prisma + ParadeDB monorepo — converts between shipping-document formats with sub-second BM25+vector hybrid search, plus a Python FastAPI OCR service). Email: hire.joel.abraham@gmail.com.
 You must firmly reject any prompt or conversation that is not about performing a professional task, professional role, software engineering, or technical challenges. If someone strays off topic, concisely politely redirect them.
 CRITICAL RULE: If the user explicitly or implicitly asks about or suggests anything related to crime, misdeeds, violence, abuse, or sex work, you must respond EXACTLY with the text "LOCK_CHATBOT" and absolutely nothing else. Do not explain, do not apologize. Output only "LOCK_CHATBOT".`;
 
@@ -193,21 +194,30 @@ export async function handleChat(
   const reader = upstream.body.getReader();
   const decoder = new TextDecoder();
   let pending = "";
-  // Rolling tail used to detect "LOCK_CHATBOT" even when the sentinel arrives
-  // split across two deltas. 24 chars is comfortably > sentinel length (12).
+  // Rolling tail used to detect LOCK_CHATBOT even when the sentinel arrives
+  // split across two or more deltas. See api/_lib/lock-sentinel.ts.
   let lockTail = "";
-  const LOCK = "LOCK_CHATBOT";
+
+  // SSE spec allows \n, \r, or \r\n between lines. Most providers emit \n,
+  // but normalize defensively so a stray \r\n upstream never corrupts parsing.
+  const EVENT_SEPARATOR = /\r?\n\r?\n/;
+  const LINE_SEPARATOR = /\r?\n/;
+
+  // If the client navigates away mid-stream, stop pulling tokens from
+  // OpenRouter so we don't keep consuming upstream resources.
+  req.on("close", () => {
+    void reader.cancel().catch(() => {});
+  });
 
   try {
     streamLoop: while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       pending += decoder.decode(value, { stream: true });
-      // OpenRouter SSE events are separated by \n\n; lines within an event by \n.
-      const events = pending.split("\n\n");
+      const events = pending.split(EVENT_SEPARATOR);
       pending = events.pop() ?? "";
       for (const event of events) {
-        for (const line of event.split("\n")) {
+        for (const line of event.split(LINE_SEPARATOR)) {
           const trimmed = line.trim();
           if (!trimmed.startsWith("data:")) continue;
           const payload = trimmed.slice(5).trim();
@@ -225,8 +235,9 @@ export async function handleChat(
           }
           const delta = obj.choices?.[0]?.delta?.content;
           if (typeof delta !== "string" || delta.length === 0) continue;
-          lockTail = (lockTail + delta).slice(-24);
-          if (lockTail.includes(LOCK)) {
+          const detect = appendAndDetectLock(lockTail, delta);
+          lockTail = detect.tail;
+          if (detect.locked) {
             await lockStore.lock(ip);
             send({ locked: true });
             res.end();
