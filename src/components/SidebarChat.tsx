@@ -38,9 +38,9 @@ export function SidebarChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: next.map((m) => ({
-            role: m.role,
-            parts: [{ text: m.content }],
+          messages: next.map((m) => ({
+            role: m.role === "model" ? "assistant" : "user",
+            content: m.content,
           })),
         }),
       });
@@ -84,7 +84,7 @@ export function SidebarChat() {
       <div className="best-chat-head">
         <span className="best-chat-pulse" />
         <span>ask.agent</span>
-        <span className="best-chat-model">gemini</span>
+        <span className="best-chat-model">gemma</span>
       </div>
       {locked ? (
         <div
