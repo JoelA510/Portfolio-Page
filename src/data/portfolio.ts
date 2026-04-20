@@ -17,7 +17,6 @@ export type Project = {
   previewUrl: string;
   githubUrl: string;
   liveUrl: string;
-  architecture: string;
 };
 
 export const PORTFOLIO = {
@@ -73,15 +72,6 @@ export const PROJECTS: Project[] = [
     previewUrl: "https://squadlogic.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/SquadLogic",
     liveUrl: "https://squadlogic.secureyour.tech/",
-    architecture: `[USER INPUT] ---> [REACT 18 FRONTEND]
-                        |
-                        v
-                [ALGORITHMIC ENGINE]
-                (Roster Generation)
-                        |
-                        v
-                [SUPABASE BACKEND]
-                  (RLS Enforced)`,
   },
   {
     id: "planterplan",
@@ -103,18 +93,6 @@ export const PROJECTS: Project[] = [
     previewUrl: "https://planterplan.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/PlanterPlan-Alpha",
     liveUrl: "https://planterplan.secureyour.tech",
-    architecture: `[AI AGENTS] <---> [REPO CONTEXT (.agent/rules)]
-                        |
-                        v
-                [CODE GENERATION]
-                        |
-                        v
-                [PLAYWRIGHT BDD SUITE]
-                        | (Fail)
-                        +---> [AI REMEDIATION LOOP]
-                        | (Pass)
-                        v
-                [HUMAN SECURITY AUDIT]`,
   },
   {
     id: "ai-advocate",
@@ -139,15 +117,6 @@ export const PROJECTS: Project[] = [
     previewUrl: "https://www.ai-advocate.org/",
     githubUrl: "https://github.com/JoelA510/AIAdvocate",
     liveUrl: "https://www.ai-advocate.org/",
-    architecture: `[CLIENT (React Native)] ---> [API GATEWAY (Supabase)]
-                                    |
-                            +-------+-------+
-                            |               |
-                            v               v
-                    [EDGE FUNCTIONS]  [POSTGRES DB]
-                            |               |
-                            v               v
-                    [AI SERVICES]     [RLS POLICIES]`,
   },
   {
     id: "formwaypoint",
@@ -172,13 +141,5 @@ export const PROJECTS: Project[] = [
     previewUrl: "https://formwaypoint.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/FormWaypoint",
     liveUrl: "https://formwaypoint.secureyour.tech",
-    architecture: `[LOGISTICS DATA] ---> [HONO API (Node.js)]
-                                |
-                                v
-                        [PRISMA ORM]
-                                |
-                                v
-                        [PARADEDB]
-                (Hybrid Search: BM25 + Vector)`,
   },
 ];

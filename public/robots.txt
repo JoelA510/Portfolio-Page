@@ -1,3 +1,7 @@
+# Domain: joelabraham.dev. If the production domain changes, update this
+# file + public/sitemap.xml + the canonical/og:url/og:image/twitter:image
+# tags in index.html.
+
 User-agent: *
 Allow: /
 

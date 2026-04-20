@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getRedis, logStoreMode } from "./redis";
 import { createRateLimiter } from "./rate-limit";
 import { createLockStore } from "./lock-store";
+import { appendAndDetectLock } from "./lock-sentinel";
 
 // Singletons across warm invocations of the same function instance.
 const redis = getRedis();
@@ -193,21 +194,30 @@ export async function handleChat(
   const reader = upstream.body.getReader();
   const decoder = new TextDecoder();
   let pending = "";
-  // Rolling tail used to detect "LOCK_CHATBOT" even when the sentinel arrives
-  // split across two deltas. 24 chars is comfortably > sentinel length (12).
+  // Rolling tail used to detect LOCK_CHATBOT even when the sentinel arrives
+  // split across two or more deltas. See api/_lib/lock-sentinel.ts.
   let lockTail = "";
-  const LOCK = "LOCK_CHATBOT";
+
+  // SSE spec allows \n, \r, or \r\n between lines. Most providers emit \n,
+  // but normalize defensively so a stray \r\n upstream never corrupts parsing.
+  const EVENT_SEPARATOR = /\r?\n\r?\n/;
+  const LINE_SEPARATOR = /\r?\n/;
+
+  // If the client navigates away mid-stream, stop pulling tokens from
+  // OpenRouter so we don't keep consuming upstream resources.
+  req.on("close", () => {
+    void reader.cancel().catch(() => {});
+  });
 
   try {
     streamLoop: while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       pending += decoder.decode(value, { stream: true });
-      // OpenRouter SSE events are separated by \n\n; lines within an event by \n.
-      const events = pending.split("\n\n");
+      const events = pending.split(EVENT_SEPARATOR);
       pending = events.pop() ?? "";
       for (const event of events) {
-        for (const line of event.split("\n")) {
+        for (const line of event.split(LINE_SEPARATOR)) {
           const trimmed = line.trim();
           if (!trimmed.startsWith("data:")) continue;
           const payload = trimmed.slice(5).trim();
@@ -225,8 +235,9 @@ export async function handleChat(
           }
           const delta = obj.choices?.[0]?.delta?.content;
           if (typeof delta !== "string" || delta.length === 0) continue;
-          lockTail = (lockTail + delta).slice(-24);
-          if (lockTail.includes(LOCK)) {
+          const detect = appendAndDetectLock(lockTail, delta);
+          lockTail = detect.tail;
+          if (detect.locked) {
             await lockStore.lock(ip);
             send({ locked: true });
             res.end();

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Domain: joelabraham.dev. If the production domain changes, update this
+     file + public/robots.txt (Sitemap line) + the canonical/og:url/
+     og:image/twitter:image tags in index.html. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://joelabraham.dev/</loc>
