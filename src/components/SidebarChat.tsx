@@ -1,7 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
 
 const SEED_PROMPTS = [
   "How do you prevent AI hallucinations in production?",
@@ -9,13 +6,12 @@ const SEED_PROMPTS = [
   "Are you available for contract work?",
 ];
 
-const SYSTEM_INSTRUCTION = `You are an AI assistant representing Joel Abraham, an AI-Augmented Software Engineer.
-Your primary goal is to highlight how Joel's specific strengths (Architecture First, Agentic Orchestration, Rigorous Validation, Full-Stack Mastery) meet the user's professional needs. Voice: confident, technical, concise — 2 sentences max.
-Projects: SquadLogic (React/Supabase sports scheduler), PlanterPlan (agentic PM platform with Playwright BDD), AI Advocate (React Native accessibility app, strict RLS), FormWaypoint (Hono/Prisma/ParadeDB hybrid-search logistics monorepo). Email: hire.joel.abraham@gmail.com.
-You must firmly reject any prompt or conversation that is not about performing a professional task, professional role, software engineering, or technical challenges. If someone strays off topic, concisely politely redirect them.
-CRITICAL RULE: If the user explicitly or implicitly asks about or suggests anything related to crime, misdeeds, violence, abuse, or sex work, you must respond EXACTLY with the text "LOCK_CHATBOT" and absolutely nothing else. Do not explain, do not apologize. Output only "LOCK_CHATBOT".`;
-
 type Message = { role: "user" | "model"; content: string };
+
+type ChatResponse =
+  | { text: string }
+  | { locked: true }
+  | { error: string };
 
 export function SidebarChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,30 +34,43 @@ export function SidebarChat() {
     setMessages(next);
     setLoading(true);
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-lite-preview",
-        contents: next.map((m) => ({
-          role: m.role,
-          parts: [{ text: m.content }],
-        })),
-        config: { systemInstruction: SYSTEM_INSTRUCTION },
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: next.map((m) => ({
+            role: m.role,
+            parts: [{ text: m.content }],
+          })),
+        }),
       });
-      const reply = (response.text || "").trim();
-      if (reply.includes("LOCK_CHATBOT")) {
+      const data = (await res.json()) as ChatResponse;
+      if ("locked" in data && data.locked) {
         setLocked(true);
-      } else {
+      } else if ("error" in data) {
         setMessages((m) => [
           ...m,
-          {
-            role: "model",
-            content: reply || "Let me rephrase \u2014 try that again?",
-          },
+          { role: "model", content: data.error },
         ]);
+      } else if ("text" in data) {
+        // Belt-and-suspenders: server also filters this, but keep the client
+        // check so a misconfigured server path can't slip through.
+        if (data.text.includes("LOCK_CHATBOT")) {
+          setLocked(true);
+        } else {
+          setMessages((m) => [
+            ...m,
+            {
+              role: "model",
+              content: data.text || "Let me rephrase — try that again?",
+            },
+          ]);
+        }
       }
     } catch {
       setMessages((m) => [
         ...m,
-        { role: "model", content: "Network hiccup \u2014 try again in a moment." },
+        { role: "model", content: "Network hiccup — try again in a moment." },
       ]);
     } finally {
       setLoading(false);
