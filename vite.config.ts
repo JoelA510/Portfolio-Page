@@ -12,11 +12,15 @@ function devApiPlugin(env: Record<string, string>): Plugin {
     apply: 'serve',
     async configureServer(server) {
       // Forward known secrets into process.env for the dev handler.
-      if (env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY) {
-        process.env.GEMINI_API_KEY = env.GEMINI_API_KEY;
-      }
-      if (env.USE_FIRESTORE && !process.env.USE_FIRESTORE) {
-        process.env.USE_FIRESTORE = env.USE_FIRESTORE;
+      const forward = [
+        'OPENROUTER_API_KEY',
+        'OPENROUTER_MODEL',
+        'APP_URL',
+        'UPSTASH_REDIS_REST_URL',
+        'UPSTASH_REDIS_REST_TOKEN',
+      ];
+      for (const k of forward) {
+        if (env[k] && !process.env[k]) process.env[k] = env[k];
       }
       const {handleChat} = await import('./api/_lib/handler');
       server.middlewares.use('/api/chat', (req, res) => {

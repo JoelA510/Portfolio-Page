@@ -1,5 +1,4 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { GoogleGenAI } from "@google/genai";
 import { getRedis, logStoreMode } from "./redis";
 import { createRateLimiter } from "./rate-limit";
 import { createLockStore } from "./lock-store";
@@ -10,11 +9,15 @@ logStoreMode();
 const limiter = createRateLimiter(20, 60_000, redis); // 20 req / IP / minute
 const lockStore = createLockStore(redis);
 
-const apiKey = process.env.GEMINI_API_KEY;
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
-if (!ai) {
+const apiKey = process.env.OPENROUTER_API_KEY;
+// Model ID is env-overridable so swapping between free Gemma tiers (or moving
+// off the :free variant if it hits capacity) doesn't require a code change.
+const MODEL = process.env.OPENROUTER_MODEL || "google/gemma-4-31b-it:free";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+if (!apiKey) {
   console.error(
-    "[api/chat] GEMINI_API_KEY is not set; /api/chat will return 503.",
+    "[api/chat] OPENROUTER_API_KEY is not set; /api/chat will return 503.",
   );
 }
 
@@ -24,9 +27,9 @@ Projects: SquadLogic (React/Supabase sports scheduler), PlanterPlan (agentic PM 
 You must firmly reject any prompt or conversation that is not about performing a professional task, professional role, software engineering, or technical challenges. If someone strays off topic, concisely politely redirect them.
 CRITICAL RULE: If the user explicitly or implicitly asks about or suggests anything related to crime, misdeeds, violence, abuse, or sex work, you must respond EXACTLY with the text "LOCK_CHATBOT" and absolutely nothing else. Do not explain, do not apologize. Output only "LOCK_CHATBOT".`;
 
-type ChatContent = {
-  role: "user" | "model";
-  parts: { text: string }[];
+type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
 };
 
 function getIp(req: IncomingMessage): string {
@@ -102,7 +105,7 @@ export async function handleChat(
   }
 
   // 3. Validate.
-  if (!ai) {
+  if (!apiKey) {
     return sendJson(res, 503, { error: "Chat service unavailable." });
   }
 
@@ -112,37 +115,65 @@ export async function handleChat(
   } catch {
     return sendJson(res, 400, { error: "Invalid JSON body." });
   }
-  const contents = (body as { contents?: unknown })?.contents as
-    | ChatContent[]
+  const messages = (body as { messages?: unknown })?.messages as
+    | ChatMessage[]
     | undefined;
-  if (!Array.isArray(contents) || contents.length === 0) {
+  if (!Array.isArray(messages) || messages.length === 0) {
     return sendJson(res, 400, { error: "Invalid request body." });
   }
-  if (contents[0]?.role !== "user") {
+  if (messages[0]?.role !== "user") {
     return sendJson(res, 400, {
       error: "Conversation must begin with a 'user' message.",
     });
   }
-  for (const c of contents) {
-    if (c.role !== "user" && c.role !== "model") {
+  for (const m of messages) {
+    if (m.role !== "user" && m.role !== "assistant") {
       return sendJson(res, 400, { error: "Invalid role in conversation." });
     }
-    if (
-      !Array.isArray(c.parts) ||
-      !c.parts.every((p) => typeof p?.text === "string")
-    ) {
-      return sendJson(res, 400, { error: "Invalid parts in conversation." });
+    if (typeof m.content !== "string") {
+      return sendJson(res, 400, { error: "Invalid content in conversation." });
     }
   }
 
-  // 4. Call the model.
+  // 4. Call OpenRouter.
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite-preview",
-      contents,
-      config: { systemInstruction: SYSTEM_INSTRUCTION },
+    const upstream = await fetch(OPENROUTER_URL, {
+      method: "POST",
+      // Cap upstream latency so a hung OpenRouter request can't consume the
+      // full serverless function budget. 25s leaves headroom on Vercel Pro
+      // (60s default); on Hobby (10s) the platform timeout fires first — the
+      // signal still ensures fetch returns promptly on a slow response.
+      signal: AbortSignal.timeout(25_000),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        // Optional but recommended by OpenRouter for attribution / abuse handling.
+        ...(process.env.APP_URL
+          ? { "HTTP-Referer": process.env.APP_URL }
+          : {}),
+        "X-Title": "Joel Abraham Portfolio",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          { role: "system", content: SYSTEM_INSTRUCTION },
+          ...messages,
+        ],
+      }),
     });
-    const text = (response.text || "").trim();
+
+    if (!upstream.ok) {
+      const detail = await upstream.text().catch(() => "");
+      console.error(
+        `[api/chat] OpenRouter ${upstream.status}: ${detail.slice(0, 500)}`,
+      );
+      return sendJson(res, 502, { error: "Upstream model error. Try again." });
+    }
+
+    const data = (await upstream.json()) as {
+      choices?: { message?: { content?: string } }[];
+    };
+    const text = (data.choices?.[0]?.message?.content || "").trim();
 
     // 5. Server-side LOCK_CHATBOT detection. Persist lock, return opaque
     //    { locked: true }. The model's offending reply never crosses the wire.
@@ -153,7 +184,7 @@ export async function handleChat(
 
     return sendJson(res, 200, { text });
   } catch (err) {
-    console.error("[api/chat] Gemini error:", err);
+    console.error("[api/chat] OpenRouter error:", err);
     return sendJson(res, 502, { error: "Upstream model error. Try again." });
   }
 }
