@@ -194,16 +194,60 @@ function ArchGraph({ projectId, active }: { projectId: string; active: boolean }
 
 type PreviewState = "idle" | "loading" | "ready" | "error";
 
+const IFRAME_SANDBOX =
+  "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation";
+const IFRAME_ALLOW =
+  "accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share";
+
 function Preview({ project }: { project: Project }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useMouseParallax(ref, 0.04);
+  const frameRef = useRef<HTMLDivElement>(null);
+  useMouseParallax(frameRef, 0.04);
   const [state, setState] = useState<PreviewState>("idle");
+  // pointer-events toggle: while `false`, mousewheel passes through the iframe
+  // so the page keeps scrolling. Clicking the tap overlay flips it on.
+  const [interactive, setInteractive] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   const wake = () => {
     setState("loading");
     timerRef.current = window.setTimeout(() => setState("error"), 9000);
   };
+
+  const toggleFullscreen = async () => {
+    const el = frameRef.current;
+    if (!el) return;
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await el.requestFullscreen();
+      }
+    } catch {
+      // Some browsers (notably iOS Safari) don't support element fullscreen.
+      // Fall back to opening the live URL in a new tab.
+      window.open(project.liveUrl, "_blank", "noreferrer");
+    }
+  };
+
+  useEffect(() => {
+    const handler = () =>
+      setIsFullscreen(document.fullscreenElement === frameRef.current);
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!interactive) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !document.fullscreenElement) {
+        setInteractive(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [interactive]);
+
   useEffect(
     () => () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
@@ -211,8 +255,17 @@ function Preview({ project }: { project: Project }) {
     [],
   );
 
+  const iframeStyle: React.CSSProperties = {
+    pointerEvents: interactive || isFullscreen ? "auto" : "none",
+  };
+
+  const canInteract = state === "ready" || state === "loading";
+
   return (
-    <div ref={ref} className="best-preview">
+    <div
+      ref={frameRef}
+      className={`best-preview ${isFullscreen ? "is-fs" : ""}`}
+    >
       <div className="best-preview-bar">
         <span className="best-preview-dots">
           <span />
@@ -222,6 +275,17 @@ function Preview({ project }: { project: Project }) {
         <span className="best-preview-url">
           {project.previewUrl.replace(/^https?:\/\//, "")}
         </span>
+        {canInteract && (
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="best-preview-fs"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? "⤡" : "⛶"}
+          </button>
+        )}
         <a
           href={project.liveUrl}
           target="_blank"
@@ -244,8 +308,9 @@ function Preview({ project }: { project: Project }) {
               title={project.title}
               loading="lazy"
               referrerPolicy="no-referrer"
-              sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              sandbox={IFRAME_SANDBOX}
+              allow={IFRAME_ALLOW}
+              style={iframeStyle}
               onLoad={() => {
                 if (timerRef.current) window.clearTimeout(timerRef.current);
                 setState("ready");
@@ -258,14 +323,43 @@ function Preview({ project }: { project: Project }) {
           </>
         )}
         {state === "ready" && (
-          <iframe
-            src={project.previewUrl}
-            title={project.title}
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          />
+          <>
+            <iframe
+              src={project.previewUrl}
+              title={project.title}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              sandbox={IFRAME_SANDBOX}
+              allow={IFRAME_ALLOW}
+              style={iframeStyle}
+            />
+            {!interactive && !isFullscreen && (
+              <button
+                type="button"
+                className="best-preview-tap"
+                onClick={() => setInteractive(true)}
+                aria-label={`Interact with ${project.title} preview`}
+              >
+                <span className="best-preview-tap-icon" aria-hidden>
+                  ⌖
+                </span>
+                <span className="best-preview-tap-hint">
+                  Tap to interact · scroll passes through
+                </span>
+              </button>
+            )}
+            {interactive && !isFullscreen && (
+              <button
+                type="button"
+                className="best-preview-release"
+                onClick={() => setInteractive(false)}
+                aria-label="Release interaction"
+              >
+                <kbd>Esc</kbd>
+                <span>release</span>
+              </button>
+            )}
+          </>
         )}
         {state === "error" && (
           <div className="best-preview-err">
