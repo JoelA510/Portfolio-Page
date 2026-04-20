@@ -135,19 +135,19 @@ export async function handleChat(
     }
   }
 
-  // 4. Call OpenRouter.
+  // 4. Call OpenRouter (streaming).
+  let upstream: Response;
   try {
-    const upstream = await fetch(OPENROUTER_URL, {
+    upstream = await fetch(OPENROUTER_URL, {
       method: "POST",
       // Cap upstream latency so a hung OpenRouter request can't consume the
       // full serverless function budget. 25s leaves headroom on Vercel Pro
-      // (60s default); on Hobby (10s) the platform timeout fires first — the
-      // signal still ensures fetch returns promptly on a slow response.
+      // (60s default); on Hobby (10s) the platform timeout fires first.
       signal: AbortSignal.timeout(25_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        // Optional but recommended by OpenRouter for attribution / abuse handling.
+        Accept: "text/event-stream",
         ...(process.env.APP_URL
           ? { "HTTP-Referer": process.env.APP_URL }
           : {}),
@@ -155,36 +155,97 @@ export async function handleChat(
       },
       body: JSON.stringify({
         model: MODEL,
+        stream: true,
         messages: [
           { role: "system", content: SYSTEM_INSTRUCTION },
           ...messages,
         ],
       }),
     });
-
-    if (!upstream.ok) {
-      const detail = await upstream.text().catch(() => "");
-      console.error(
-        `[api/chat] OpenRouter ${upstream.status}: ${detail.slice(0, 500)}`,
-      );
-      return sendJson(res, 502, { error: "Upstream model error. Try again." });
-    }
-
-    const data = (await upstream.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const text = (data.choices?.[0]?.message?.content || "").trim();
-
-    // 5. Server-side LOCK_CHATBOT detection. Persist lock, return opaque
-    //    { locked: true }. The model's offending reply never crosses the wire.
-    if (text.includes("LOCK_CHATBOT")) {
-      await lockStore.lock(ip);
-      return sendJson(res, 200, { locked: true });
-    }
-
-    return sendJson(res, 200, { text });
   } catch (err) {
-    console.error("[api/chat] OpenRouter error:", err);
+    console.error("[api/chat] OpenRouter fetch failed:", err);
     return sendJson(res, 502, { error: "Upstream model error. Try again." });
+  }
+
+  if (!upstream.ok || !upstream.body) {
+    const detail = await upstream.text().catch(() => "");
+    console.error(
+      `[api/chat] OpenRouter ${upstream.status}: ${detail.slice(0, 500)}`,
+    );
+    return sendJson(res, 502, { error: "Upstream model error. Try again." });
+  }
+
+  // 5. Stream the response back as SSE. The wire format is intentionally
+  //    simple — one JSON object per SSE event:
+  //      {"delta":"..."}     incremental token text
+  //      {"locked":true}     server detected LOCK_CHATBOT (terminal)
+  //      {"error":"..."}     mid-stream error (terminal)
+  //      {"done":true}       stream finished cleanly (terminal)
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  // Vercel/Cloudflare/nginx will buffer SSE without this hint.
+  res.setHeader("X-Accel-Buffering", "no");
+
+  const send = (obj: unknown) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+  const reader = upstream.body.getReader();
+  const decoder = new TextDecoder();
+  let pending = "";
+  // Rolling tail used to detect "LOCK_CHATBOT" even when the sentinel arrives
+  // split across two deltas. 24 chars is comfortably > sentinel length (12).
+  let lockTail = "";
+  const LOCK = "LOCK_CHATBOT";
+
+  try {
+    streamLoop: while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      pending += decoder.decode(value, { stream: true });
+      // OpenRouter SSE events are separated by \n\n; lines within an event by \n.
+      const events = pending.split("\n\n");
+      pending = events.pop() ?? "";
+      for (const event of events) {
+        for (const line of event.split("\n")) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.slice(5).trim();
+          if (!payload) continue;
+          if (payload === "[DONE]") {
+            send({ done: true });
+            res.end();
+            return;
+          }
+          let obj: { choices?: { delta?: { content?: string } }[] };
+          try {
+            obj = JSON.parse(payload);
+          } catch {
+            continue;
+          }
+          const delta = obj.choices?.[0]?.delta?.content;
+          if (typeof delta !== "string" || delta.length === 0) continue;
+          lockTail = (lockTail + delta).slice(-24);
+          if (lockTail.includes(LOCK)) {
+            await lockStore.lock(ip);
+            send({ locked: true });
+            res.end();
+            await reader.cancel().catch(() => {});
+            break streamLoop;
+          }
+          send({ delta });
+        }
+      }
+    }
+    if (!res.writableEnded) {
+      send({ done: true });
+      res.end();
+    }
+  } catch (err) {
+    console.error("[api/chat] stream error:", err);
+    if (!res.writableEnded) {
+      send({ error: "Upstream model error. Try again." });
+      res.end();
+    }
   }
 }

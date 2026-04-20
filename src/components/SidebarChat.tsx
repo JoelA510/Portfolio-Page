@@ -8,15 +8,26 @@ const SEED_PROMPTS = [
 
 type Message = { role: "user" | "model"; content: string };
 
-type ChatResponse =
+type JsonResponse =
   | { text: string }
   | { locked: true }
   | { error: string };
 
+type StreamEvent =
+  | { delta: string }
+  | { locked: true }
+  | { error: string }
+  | { done: true };
+
 export function SidebarChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  // `loading` = waiting for first byte (typing dots).
+  // It flips off once the first delta arrives so the dots get replaced by
+  // the streaming bubble. `streaming` keeps the input disabled during the
+  // rest of the response so the user can't pile on mid-reply.
   const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [locked, setLocked] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -26,13 +37,28 @@ export function SidebarChat() {
     }
   }, [messages]);
 
+  const appendModel = (content: string) =>
+    setMessages((m) => [...m, { role: "model", content }]);
+
+  const updateLastModel = (content: string) =>
+    setMessages((m) => {
+      const next = [...m];
+      const last = next[next.length - 1];
+      if (last && last.role === "model") {
+        next[next.length - 1] = { ...last, content };
+      }
+      return next;
+    });
+
   const send = async (text?: string) => {
     const t = (text ?? input).trim();
-    if (!t || loading || locked) return;
+    if (!t || loading || streaming || locked) return;
     setInput("");
     const next: Message[] = [...messages, { role: "user", content: t }];
     setMessages(next);
     setLoading(true);
+    setStreaming(true);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -44,40 +70,100 @@ export function SidebarChat() {
           })),
         }),
       });
-      const data = (await res.json()) as ChatResponse;
-      if ("locked" in data && data.locked) {
-        setLocked(true);
-      } else if ("error" in data) {
-        setMessages((m) => [
-          ...m,
-          { role: "model", content: data.error },
-        ]);
-      } else if ("text" in data) {
-        // Belt-and-suspenders: server also filters this, but keep the client
-        // check so a misconfigured server path can't slip through.
-        if (data.text.includes("LOCK_CHATBOT")) {
+
+      const ct = res.headers.get("content-type") || "";
+      // Non-streaming path: rate-limit, validation, locked-on-arrival, no key.
+      if (ct.includes("application/json")) {
+        const data = (await res.json()) as JsonResponse;
+        if ("locked" in data && data.locked) {
           setLocked(true);
-        } else {
-          setMessages((m) => [
-            ...m,
-            {
-              role: "model",
-              content: data.text || "Let me rephrase — try that again?",
-            },
-          ]);
+        } else if ("error" in data) {
+          appendModel(data.error);
+        } else if ("text" in data) {
+          if (data.text.includes("LOCK_CHATBOT")) setLocked(true);
+          else appendModel(data.text || "Let me rephrase — try that again?");
+        }
+        return;
+      }
+
+      if (!res.body) throw new Error("no response body");
+
+      // Stream parse. The server sends one JSON object per SSE event.
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let pending = "";
+      let acc = "";
+      let placeholderAdded = false;
+
+      streamLoop: while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        pending += decoder.decode(value, { stream: true });
+        const events = pending.split("\n\n");
+        pending = events.pop() ?? "";
+        for (const event of events) {
+          for (const line of event.split("\n")) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith("data:")) continue;
+            const payload = trimmed.slice(5).trim();
+            if (!payload) continue;
+            let obj: StreamEvent;
+            try {
+              obj = JSON.parse(payload) as StreamEvent;
+            } catch {
+              continue;
+            }
+            if ("locked" in obj && obj.locked) {
+              setLocked(true);
+              if (placeholderAdded) {
+                // Drop the partial bubble — its tokens were the prefix of the
+                // sentinel and aren't worth showing.
+                setMessages((m) => m.slice(0, -1));
+              }
+              break streamLoop;
+            }
+            if ("error" in obj) {
+              if (placeholderAdded) updateLastModel(obj.error);
+              else appendModel(obj.error);
+              break streamLoop;
+            }
+            if ("done" in obj && obj.done) {
+              break streamLoop;
+            }
+            if ("delta" in obj && typeof obj.delta === "string") {
+              acc += obj.delta;
+              // Belt-and-suspenders: the server also detects this, but if the
+              // sentinel ever slipped through, freeze the UI.
+              if (acc.includes("LOCK_CHATBOT")) {
+                setLocked(true);
+                if (placeholderAdded) setMessages((m) => m.slice(0, -1));
+                break streamLoop;
+              }
+              if (!placeholderAdded) {
+                placeholderAdded = true;
+                setLoading(false);
+                appendModel(acc);
+              } else {
+                updateLastModel(acc);
+              }
+            }
+          }
         }
       }
+
+      if (!placeholderAdded && !locked) {
+        appendModel("Let me rephrase — try that again?");
+      }
     } catch {
-      setMessages((m) => [
-        ...m,
-        { role: "model", content: "Network hiccup — try again in a moment." },
-      ]);
+      appendModel("Network hiccup — try again in a moment.");
     } finally {
       setLoading(false);
+      setStreaming(false);
     }
   };
 
   const isEmpty = messages.length === 0;
+  const lastIsModel = messages[messages.length - 1]?.role === "model";
 
   return (
     <div className="best-chat">
@@ -120,7 +206,7 @@ export function SidebarChat() {
                   <div className="best-msg-text">{m.content}</div>
                 </div>
               ))}
-              {loading && (
+              {loading && !lastIsModel && (
                 <div className="best-msg best-msg-model">
                   <div className="best-msg-text best-typing">
                     <span />
@@ -157,12 +243,12 @@ export function SidebarChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything…"
-              disabled={loading}
+              disabled={loading || streaming}
               aria-label="Ask a question"
             />
             <button
               type="submit"
-              disabled={!input.trim() || loading}
+              disabled={!input.trim() || loading || streaming}
               aria-label="Send"
             >
               ↵

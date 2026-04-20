@@ -1,4 +1,5 @@
 import { PORTFOLIO, PROJECTS } from "../data/portfolio";
+import { currentAvailability } from "../data/availability";
 import type { Theme } from "../hooks/useTheme";
 import { LivePipelineGlyph } from "./LivePipelineGlyph";
 import { SidebarChat } from "./SidebarChat";
@@ -24,7 +25,7 @@ export function Sidebar({
         <div className="best-id">
           <div className="best-status">
             <span className="best-status-dot" />
-            <span>Available · Spring 2026</span>
+            <span>{currentAvailability()}</span>
           </div>
           <h1 className="best-name">
             {PORTFOLIO.name.split("").map((ch, i) => (
