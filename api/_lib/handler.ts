@@ -1,14 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { GoogleGenAI } from "@google/genai";
-import { getFirestore, logStoreMode } from "./firestore";
+import { getRedis, logStoreMode } from "./redis";
 import { createRateLimiter } from "./rate-limit";
 import { createLockStore } from "./lock-store";
 
 // Singletons across warm invocations of the same function instance.
-const firestore = getFirestore();
+const redis = getRedis();
 logStoreMode();
-const limiter = createRateLimiter(20, 60_000, firestore); // 20 req / IP / minute
-const lockStore = createLockStore(firestore);
+const limiter = createRateLimiter(20, 60_000, redis); // 20 req / IP / minute
+const lockStore = createLockStore(redis);
 
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;

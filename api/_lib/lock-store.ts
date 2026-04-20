@@ -1,4 +1,4 @@
-import { Firestore } from "@google-cloud/firestore";
+import type { Redis } from "@upstash/redis";
 import crypto from "node:crypto";
 
 export interface LockStore {
@@ -9,9 +9,9 @@ export interface LockStore {
 const hashKey = (key: string): string =>
   crypto.createHash("sha256").update(key).digest("hex").slice(0, 32);
 
-const LOCK_DURATION_MS = 24 * 60 * 60 * 1000;
+const LOCK_TTL_SEC = 24 * 60 * 60;
 
-export class InMemoryLockStore implements LockStore {
+class InMemoryLockStore implements LockStore {
   private store = new Map<string, number>();
 
   async isLocked(key: string): Promise<boolean> {
@@ -25,28 +25,24 @@ export class InMemoryLockStore implements LockStore {
   }
 
   async lock(key: string): Promise<void> {
-    this.store.set(key, Date.now() + LOCK_DURATION_MS);
+    this.store.set(key, Date.now() + LOCK_TTL_SEC * 1000);
   }
 }
 
-export class FirestoreLockStore implements LockStore {
-  constructor(
-    private db: Firestore,
-    private collection: string,
-  ) {}
+class UpstashLockStore implements LockStore {
+  constructor(private redis: Redis) {}
+
+  private k(key: string) {
+    return `chat:lock:${hashKey(key)}`;
+  }
 
   async isLocked(key: string): Promise<boolean> {
     try {
-      const snap = await this.db
-        .collection(this.collection)
-        .doc(hashKey(key))
-        .get();
-      if (!snap.exists) return false;
-      const data = snap.data() as { until: number };
-      return data.until > Date.now();
+      return (await this.redis.exists(this.k(key))) === 1;
     } catch (err) {
+      // Fail-open on reads: a Redis outage shouldn't block legitimate users.
       console.error(
-        "[lock-store] Firestore read error, assuming not locked:",
+        "[lock-store] Upstash read error, assuming not locked:",
         err,
       );
       return false;
@@ -55,23 +51,17 @@ export class FirestoreLockStore implements LockStore {
 
   async lock(key: string): Promise<void> {
     try {
-      await this.db
-        .collection(this.collection)
-        .doc(hashKey(key))
-        .set({ until: Date.now() + LOCK_DURATION_MS });
+      await this.redis.set(this.k(key), 1, { ex: LOCK_TTL_SEC });
     } catch (err) {
-      // Fail-closed on writes: log loudly. Silently losing a lock signal is worse than
-      // failing the request.
+      // Log loudly — silently losing a lock signal is worse than failing noisily.
       console.error(
-        "[lock-store] Firestore write error, lock NOT persisted:",
+        "[lock-store] Upstash write error, lock NOT persisted:",
         err,
       );
     }
   }
 }
 
-export function createLockStore(firestore: Firestore | null): LockStore {
-  return firestore
-    ? new FirestoreLockStore(firestore, "chat_locks")
-    : new InMemoryLockStore();
+export function createLockStore(redis: Redis | null): LockStore {
+  return redis ? new UpstashLockStore(redis) : new InMemoryLockStore();
 }
