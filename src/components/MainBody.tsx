@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { PORTFOLIO, PROJECTS } from "../data/portfolio";
+import { currentAvailability } from "../data/availability";
 import { clamp01, useInViewProgress } from "../hooks/useInViewProgress";
 import { useMouseParallax } from "../hooks/useMouseParallax";
 import { ProjectCard } from "./ProjectCard";
 
 function LiveTicker() {
   const items = [
-    { label: "now", value: "Available · Spring 2026" },
+    { label: "now", value: currentAvailability() },
     { label: "based", value: "UTC−8 · remote" },
     { label: "stack", value: "TypeScript · React · Supabase · Postgres" },
     { label: "agents", value: "Antigravity · Claude Code · Copilot" },

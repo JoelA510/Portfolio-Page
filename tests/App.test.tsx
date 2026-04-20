@@ -9,7 +9,9 @@ describe("App", () => {
     // on the availability string which appears in the sidebar pill and the
     // live ticker. getAllByText handles both.
     expect(
-      screen.getAllByText(/Available · Spring 2026/).length,
+      screen.getAllByText(
+        /Available · (Spring|Summer|Fall|Winter) \d{4}/,
+      ).length,
     ).toBeGreaterThan(0);
   });
 
