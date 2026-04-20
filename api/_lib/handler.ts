@@ -139,6 +139,11 @@ export async function handleChat(
   try {
     const upstream = await fetch(OPENROUTER_URL, {
       method: "POST",
+      // Cap upstream latency so a hung OpenRouter request can't consume the
+      // full serverless function budget. 25s leaves headroom on Vercel Pro
+      // (60s default); on Hobby (10s) the platform timeout fires first — the
+      // signal still ensures fetch returns promptly on a slow response.
+      signal: AbortSignal.timeout(25_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
