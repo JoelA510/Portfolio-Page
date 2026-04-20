@@ -244,7 +244,8 @@ function Preview({ project }: { project: Project }) {
               title={project.title}
               loading="lazy"
               referrerPolicy="no-referrer"
-              sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin"
+              sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               onLoad={() => {
                 if (timerRef.current) window.clearTimeout(timerRef.current);
                 setState("ready");
@@ -262,7 +263,8 @@ function Preview({ project }: { project: Project }) {
             title={project.title}
             loading="lazy"
             referrerPolicy="no-referrer"
-            sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin"
+            sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           />
         )}
         {state === "error" && (

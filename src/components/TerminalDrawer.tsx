@@ -192,6 +192,7 @@ export function TerminalDrawer({ open, setOpen }: Props) {
             onKeyDown={onKey}
             spellCheck={false}
             autoComplete="off"
+            aria-label="Terminal input"
           />
           <span className="best-term-caret" />
         </div>

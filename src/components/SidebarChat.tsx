@@ -149,6 +149,7 @@ export function SidebarChat() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything…"
               disabled={loading}
+              aria-label="Ask a question"
             />
             <button
               type="submit"

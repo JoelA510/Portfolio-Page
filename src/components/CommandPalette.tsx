@@ -153,6 +153,7 @@ export function CommandPalette({
             }}
             onKeyDown={onKey}
             placeholder="Search · jump · run…"
+            aria-label="Search projects and actions"
           />
           <span className="best-palette-kbd">esc</span>
         </div>
