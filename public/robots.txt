@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# The chat proxy only serves POST and is rate-limited; still, no reason to crawl it.
+Disallow: /api/
+
+Sitemap: https://joelabraham.dev/sitemap.xml
