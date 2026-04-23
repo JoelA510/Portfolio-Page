@@ -19,6 +19,16 @@ export function LivePipelineGlyph() {
     return () => clearInterval(id);
   }, [hover]);
 
+  // Mouse users get hover via onMouseEnter/Leave. Touch + pen users get tap-
+  // to-pin via onPointerDown: tapping a stage pins it, tapping the same stage
+  // again unpins. Ignoring pointerType === "mouse" here keeps desktop behavior
+  // identical — a mouse click won't fight the hover state.
+  const togglePin = (i: number) => setHover((cur) => (cur === i ? null : i));
+  const handlePointerDown = (i: number) => (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse") return;
+    togglePin(i);
+  };
+
   const phase = hover !== null ? hover : autoPhase;
 
   const cx = 110;
@@ -82,11 +92,13 @@ export function LivePipelineGlyph() {
               key={s.id}
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
+              onPointerDown={handlePointerDown(i)}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               tabIndex={0}
               role="button"
               aria-label={s.label}
+              aria-pressed={i === phase}
               style={{ cursor: "pointer", outline: "none" }}
             >
               <circle cx={p.x} cy={p.y} r={14} fill="transparent" />
@@ -126,6 +138,7 @@ export function LivePipelineGlyph() {
             className={`best-loop-label ${i === phase ? "is-active" : ""}`}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
+            onPointerDown={handlePointerDown(i)}
             onFocus={() => setHover(i)}
             onBlur={() => setHover(null)}
             aria-pressed={i === phase}

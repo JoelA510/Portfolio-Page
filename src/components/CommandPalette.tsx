@@ -185,6 +185,12 @@ export function CommandPalette({
             );
           })}
         </div>
+        <div className="best-palette-legend">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> select</span>
+          <span><kbd>j</kbd><kbd>k</kbd> cycle projects</span>
+          <span><kbd>~</kbd> terminal</span>
+        </div>
       </div>
     </div>
   );

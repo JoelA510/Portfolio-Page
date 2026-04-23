@@ -21,6 +21,18 @@ export default function App() {
     }
   }, []);
 
+  // Lock the body scroll while an overlay is open so swipes on mobile don't
+  // scroll the page behind the palette or terminal drawer.
+  useEffect(() => {
+    const anyOverlayOpen = paletteOpen || termOpen;
+    if (!anyOverlayOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [paletteOpen, termOpen]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const active = document.activeElement;

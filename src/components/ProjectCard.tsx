@@ -344,7 +344,9 @@ function Preview({ project }: { project: Project }) {
                   ⌖
                 </span>
                 <span className="best-preview-tap-hint">
-                  Tap to interact · scroll passes through
+                  <span className="best-preview-tap-verb-mouse">Click</span>
+                  <span className="best-preview-tap-verb-touch">Tap</span>
+                  {" to interact · scroll passes through"}
                 </span>
               </button>
             )}

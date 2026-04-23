@@ -7,6 +7,14 @@ export function useTheme(): [Theme, () => void] {
     try {
       const stored = localStorage.getItem("best-theme");
       if (stored === "dark" || stored === "light") return stored;
+      // Align with the pre-mount script in index.html: fall back to the
+      // OS preference, not a hardcoded default. Keeps first-render state
+      // consistent with what was painted on the first frame.
+      if (typeof window !== "undefined" && window.matchMedia) {
+        return window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark";
+      }
     } catch {
       /* no-op */
     }

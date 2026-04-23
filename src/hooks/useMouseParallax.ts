@@ -7,6 +7,16 @@ export function useMouseParallax<T extends HTMLElement>(
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Touch-only devices fire synthetic mousemove events during a drag, which
+    // on mobile translates to jittery parallax on every tap-scroll. Skip the
+    // listeners entirely unless the primary pointer is a true hover device.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      !window.matchMedia("(hover: hover)").matches
+    ) {
+      return;
+    }
     let raf: number | null = null;
     const s = { x: 0, y: 0, tx: 0, ty: 0 };
 
