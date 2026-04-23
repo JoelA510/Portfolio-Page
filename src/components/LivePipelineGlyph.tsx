@@ -11,26 +11,38 @@ const STAGES: Stage[] = [
 
 export function LivePipelineGlyph() {
   const [autoPhase, setAutoPhase] = useState(0);
+  // `hover` is the transient display state — set by mouse hover and keyboard
+  // focus, cleared on leave/blur. Drives the visual highlight only.
   const [hover, setHover] = useState<number | null>(null);
+  // `pinned` is the semantic "user has explicitly selected this stage" state.
+  // Set by tap (touch/pen pointer-down) and keyboard Enter/Space; toggles off
+  // when the same stage is re-selected. Drives `aria-pressed` so screen
+  // readers only hear "pressed" when the user actually pressed something.
+  const [pinned, setPinned] = useState<number | null>(null);
 
   useEffect(() => {
-    if (hover !== null) return;
+    // Stop auto-rotation whenever the user is showing intent (hovering,
+    // focusing, or has pinned a stage). Otherwise the visible phase would
+    // jump out from under them.
+    if (hover !== null || pinned !== null) return;
     const id = setInterval(() => setAutoPhase((p) => (p + 1) % 4), 1600);
     return () => clearInterval(id);
-  }, [hover]);
+  }, [hover, pinned]);
 
-  // Mouse users get hover via onMouseEnter/Leave. Touch + pen users get tap-
-  // to-pin via onPointerDown: tapping a stage pins it, tapping the same stage
-  // again unpins. Ignoring pointerType === "mouse" here keeps desktop behavior
-  // identical — a mouse click won't fight the hover state.
-  const togglePin = (i: number) => setHover((cur) => (cur === i ? null : i));
+  // Mouse users get hover via onMouseEnter/Leave; they never trip pinned, so
+  // their behavior is identical to before. Touch + pen users get tap-to-pin
+  // via onPointerDown: tapping a stage pins it, tapping the same stage
+  // unpins. Filtering pointerType === "mouse" keeps mouse clicks from
+  // creating a pinned state the user didn't ask for.
+  const togglePin = (i: number) =>
+    setPinned((cur) => (cur === i ? null : i));
   const handlePointerDown = (i: number) => (e: React.PointerEvent) => {
     if (e.pointerType === "mouse") return;
     togglePin(i);
   };
-  // Keyboard users: focus already *temporarily* pins via onFocus, but that
-  // state resets on blur. Enter/Space persists the pin so they can tab away
-  // and still read the sub-label.
+  // Keyboard: focus already shows the stage transiently via onFocus/setHover.
+  // Enter/Space promotes that to a real pin so the user can tab away and
+  // still read the sub-label.
   const handleKeyDown = (i: number) => (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -38,7 +50,8 @@ export function LivePipelineGlyph() {
     }
   };
 
-  const phase = hover !== null ? hover : autoPhase;
+  // Display priority: explicit pin > transient hover/focus > auto-rotation.
+  const phase = pinned ?? hover ?? autoPhase;
 
   const cx = 110;
   const cy = 80;
@@ -108,7 +121,7 @@ export function LivePipelineGlyph() {
               tabIndex={0}
               role="button"
               aria-label={s.label}
-              aria-pressed={hover === i}
+              aria-pressed={pinned === i}
               style={{ cursor: "pointer", outline: "none" }}
             >
               <circle cx={p.x} cy={p.y} r={14} fill="transparent" />
@@ -152,7 +165,7 @@ export function LivePipelineGlyph() {
             onKeyDown={handleKeyDown(i)}
             onFocus={() => setHover(i)}
             onBlur={() => setHover(null)}
-            aria-pressed={hover === i}
+            aria-pressed={pinned === i}
           >
             <span className="best-loop-label-name">{s.label}</span>
             <span className="best-loop-label-sub">{s.sub}</span>
