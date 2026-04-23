@@ -28,6 +28,15 @@ export function LivePipelineGlyph() {
     if (e.pointerType === "mouse") return;
     togglePin(i);
   };
+  // Keyboard users: focus already *temporarily* pins via onFocus, but that
+  // state resets on blur. Enter/Space persists the pin so they can tab away
+  // and still read the sub-label.
+  const handleKeyDown = (i: number) => (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      togglePin(i);
+    }
+  };
 
   const phase = hover !== null ? hover : autoPhase;
 
@@ -93,12 +102,13 @@ export function LivePipelineGlyph() {
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
               onPointerDown={handlePointerDown(i)}
+              onKeyDown={handleKeyDown(i)}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               tabIndex={0}
               role="button"
               aria-label={s.label}
-              aria-pressed={i === phase}
+              aria-pressed={hover === i}
               style={{ cursor: "pointer", outline: "none" }}
             >
               <circle cx={p.x} cy={p.y} r={14} fill="transparent" />
@@ -139,9 +149,10 @@ export function LivePipelineGlyph() {
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
             onPointerDown={handlePointerDown(i)}
+            onKeyDown={handleKeyDown(i)}
             onFocus={() => setHover(i)}
             onBlur={() => setHover(null)}
-            aria-pressed={i === phase}
+            aria-pressed={hover === i}
           >
             <span className="best-loop-label-name">{s.label}</span>
             <span className="best-loop-label-sub">{s.sub}</span>
