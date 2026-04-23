@@ -19,6 +19,25 @@ export function LivePipelineGlyph() {
     return () => clearInterval(id);
   }, [hover]);
 
+  // Mouse users get hover via onMouseEnter/Leave. Touch + pen users get tap-
+  // to-pin via onPointerDown: tapping a stage pins it, tapping the same stage
+  // again unpins. Ignoring pointerType === "mouse" here keeps desktop behavior
+  // identical — a mouse click won't fight the hover state.
+  const togglePin = (i: number) => setHover((cur) => (cur === i ? null : i));
+  const handlePointerDown = (i: number) => (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse") return;
+    togglePin(i);
+  };
+  // Keyboard users: focus already *temporarily* pins via onFocus, but that
+  // state resets on blur. Enter/Space persists the pin so they can tab away
+  // and still read the sub-label.
+  const handleKeyDown = (i: number) => (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      togglePin(i);
+    }
+  };
+
   const phase = hover !== null ? hover : autoPhase;
 
   const cx = 110;
@@ -82,11 +101,14 @@ export function LivePipelineGlyph() {
               key={s.id}
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
+              onPointerDown={handlePointerDown(i)}
+              onKeyDown={handleKeyDown(i)}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               tabIndex={0}
               role="button"
               aria-label={s.label}
+              aria-pressed={hover === i}
               style={{ cursor: "pointer", outline: "none" }}
             >
               <circle cx={p.x} cy={p.y} r={14} fill="transparent" />
@@ -126,9 +148,11 @@ export function LivePipelineGlyph() {
             className={`best-loop-label ${i === phase ? "is-active" : ""}`}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
+            onPointerDown={handlePointerDown(i)}
+            onKeyDown={handleKeyDown(i)}
             onFocus={() => setHover(i)}
             onBlur={() => setHover(null)}
-            aria-pressed={i === phase}
+            aria-pressed={hover === i}
           >
             <span className="best-loop-label-name">{s.label}</span>
             <span className="best-loop-label-sub">{s.sub}</span>

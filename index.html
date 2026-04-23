@@ -33,6 +33,24 @@
     <meta name="twitter:title" content="Joel Abraham — AI-augmented software engineer" />
     <meta name="twitter:description" content="Production software, architected with AI as the execution_layer." />
     <meta name="twitter:image" content="https://joelabraham.dev/og-image.svg" />
+
+    <!-- Pre-mount theme hydration. CSS tokens live under :root[data-theme="…"],
+         so the attribute must be set before first paint or the page renders
+         token-less for one frame. Reads the same localStorage key as
+         src/hooks/useTheme.ts ("best-theme"); falls back to the OS preference. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("best-theme");
+          if (t !== "light" && t !== "dark") {
+            t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (_) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
