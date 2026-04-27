@@ -21,10 +21,9 @@ export type Project = {
 
 export const PORTFOLIO = {
   name: "JOEL ABRAHAM",
-  title: "AI-AUGMENTED SOFTWARE ENGINEER",
+  title: "TECHNICAL OPERATIONS & SYSTEMS AUTOMATION",
   manifesto:
-    "I build production software by directing AI agents through rigorous constraints \u2014 architecture, schemas, and test suites I define up front. The agents ship the code; the design discipline is mine. The result is high-velocity engineering without the hallucination tax: systems that pass their tests, survive their audits, and hold up under real users.",
-  email: "hire.joel.abraham@gmail.com",
+    "I build practical software for operational workflows: logistics documents, scheduling systems, compliance data, reporting, and secure multi-tenant applications. My work combines hands-on operations experience with SQL, Python, TypeScript, Supabase, and AI-assisted development under strict architecture, schema, and test constraints.",  email: "hire.joel.abraham@gmail.com",
   github: "https://github.com/JoelA510",
   linkedin: "https://linkedin.com/in/joel-abraham-cv",
   traits: [
