@@ -28,6 +28,22 @@ export function useTheme(): [Theme, () => void] {
       /* no-op */
     }
     document.documentElement.setAttribute("data-theme", theme);
+
+    // index.html keeps two prefers-color-scheme-scoped theme-color metas so
+    // mobile browser chrome is correct via pure CSS with no JS at all. Once
+    // the user has an explicit override, both tags' content is set to the
+    // same color — whichever one the OS is currently matching then shows
+    // the right value regardless of which query "wins". Read --paper live
+    // (rather than hardcoding it again here) so this can't drift from the
+    // token that actually painted the page.
+    const paper = getComputedStyle(document.documentElement)
+      .getPropertyValue("--paper")
+      .trim();
+    if (paper) {
+      document
+        .querySelectorAll('meta[name="theme-color"]')
+        .forEach((meta) => meta.setAttribute("content", paper));
+    }
   }, [theme]);
 
   const toggle = useCallback(

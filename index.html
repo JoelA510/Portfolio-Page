@@ -4,18 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f5f5f0" media="(prefers-color-scheme: light)" />
+    <!-- Two tags so the correct color shows via pure CSS media-matching with
+         no JS at all (matches the OS preference by default, same as before
+         theme toggling existed). Once the user has an explicit override, the
+         pre-mount script below and src/hooks/useTheme.ts set BOTH tags'
+         content to the same color — whichever one the OS is currently
+         matching then renders that color regardless of which query "wins",
+         so an explicit choice that differs from the OS still displays
+         correctly, without ever requiring JS to run. -->
+    <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)" />
 
-    <title>Joel Abraham - Technical Operations & Systems Automation</title>
+    <title>Joel Abraham — AI-Augmented Software Engineer</title>
     <meta
       name="description"
-      content="Operations, logistics, compliance, SQL/Python automation, and governance-minded software projects by Joel Abraham. Featured projects: SquadLogic, FormWaypoint, AIAdvocate, and PlanterPlan."
+      content="Joel Abraham — AI-Augmented Software Engineer. Production software built by directing AI agents through constraints defined up front: architecture, schemas, and test suites. Featured projects: SquadLogic, PlanterPlan, AI Advocate, and FormWaypoint."
     />
     <meta name="author" content="Joel Abraham" />
     <meta
       name="keywords"
-      content="Joel Abraham, technical operations, logistics automation, compliance automation, SQL, Python, Supabase, ERP, WMS, operations analyst, business systems analyst"
+      content="Joel Abraham, AI-augmented software engineer, AI-assisted development, agentic engineering, TypeScript, React, Supabase, Playwright, PostgreSQL, logistics automation"
     />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://secureyour.tech/" />
@@ -25,17 +33,19 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Only the weights src/index.css actually uses: Jakarta 400/500/600/700
+         upright (no italics, no 300/800), JetBrains Mono 400 (no bold/italic). -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
     />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Joel Abraham" />
-    <meta property="og:title" content="Joel Abraham - Technical Operations & Systems Automation" />
+    <meta property="og:title" content="Joel Abraham — AI-Augmented Software Engineer" />
     <meta
       property="og:description"
-      content="Logistics automation, scheduling systems, compliance workflows, SQL/Python reporting, and secure Supabase applications."
+      content="Production software built by directing AI agents through constraints defined up front — architecture, schemas, and test suites."
     />
     <meta property="og:url" content="https://secureyour.tech/" />
     <meta property="og:image" content="https://secureyour.tech/og-image.svg" />
@@ -43,19 +53,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Joel Abraham - Technical Operations & Systems Automation. Featured projects: SquadLogic, FormWaypoint, AIAdvocate, and PlanterPlan."
+      content="Joel Abraham — AI-Augmented Software Engineer. Featured projects: SquadLogic, PlanterPlan, AI Advocate, and FormWaypoint."
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Joel Abraham - Technical Operations & Systems Automation" />
+    <meta name="twitter:title" content="Joel Abraham — AI-Augmented Software Engineer" />
     <meta
       name="twitter:description"
-      content="Operations, logistics, compliance, SQL/Python automation, and governance-minded software projects."
+      content="Production software built by directing AI agents through constraints defined up front — architecture, schemas, and test suites."
     />
     <meta name="twitter:image" content="https://secureyour.tech/og-image.svg" />
     <meta
       name="twitter:image:alt"
-      content="Joel Abraham portfolio for technical operations, logistics automation, compliance workflows, and systems automation."
+      content="Joel Abraham portfolio — AI-augmented software engineering: SquadLogic, PlanterPlan, AI Advocate, and FormWaypoint."
     />
 
     <!--
@@ -64,15 +74,30 @@
       CSS tokens live under :root[data-theme="..."], so the attribute must be
       set before first paint. Reads the same localStorage key as
       src/hooks/useTheme.ts ("best-theme"); falls back to OS preference.
+      Also seeds both theme-color metas above so mobile browser chrome
+      matches on first paint when there's a stored override that differs
+      from the OS; kept in sync afterwards by useTheme.ts. This literal color
+      map is unavoidable here — it's a synchronous bootstrap script that runs
+      before src/index.css (and its --paper token) has loaded, specifically
+      so it can set data-theme before first paint. Keep in sync with --paper
+      in src/index.css. querySelectorAll + forEach is used (rather than a
+      single querySelector) so a missing/renamed meta tag is a silent no-op,
+      not a thrown error that would fall into the catch below and discard
+      the theme this script just resolved.
     -->
     <script>
       (function () {
+        var PAPER = { light: "#FAF9F6", dark: "#161613" };
         try {
           var t = localStorage.getItem("best-theme");
           if (t !== "light" && t !== "dark") {
             t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
           }
           document.documentElement.setAttribute("data-theme", t);
+          var metas = document.querySelectorAll('meta[name="theme-color"]');
+          for (var i = 0; i < metas.length; i++) {
+            metas[i].setAttribute("content", PAPER[t]);
+          }
         } catch (_) {
           document.documentElement.setAttribute("data-theme", "dark");
         }

@@ -3,7 +3,6 @@ export type TechChip = { name: string; description: string };
 export type Trait = {
   title: string;
   description: string;
-  glyph: string;
 };
 
 export type Project = {
@@ -13,37 +12,36 @@ export type Project = {
   description: string;
   tech: TechChip[];
   aiStack: TechChip[];
+  /** One-line "Process:" summary of the AI → test → review loop. */
   remediation: string;
+  /** ASCII architecture diagram, rendered in a <pre>. */
+  architecture: string;
   previewUrl: string;
   githubUrl: string;
   liveUrl: string;
 };
 
 export const PORTFOLIO = {
-  name: "JOEL ABRAHAM",
-  title: "TECHNICAL OPERATIONS & SYSTEMS AUTOMATION",
-  manifesto:
-    "I build practical software for operational workflows: logistics documents, scheduling systems, compliance data, reporting, and secure multi-tenant applications. My work combines hands-on operations experience with SQL, Python, TypeScript, Supabase, and AI-assisted development under strict architecture, schema, and test constraints.",  email: "hire.joel.abraham@gmail.com",
+  name: "Joel Abraham",
+  email: "hire.joel.abraham@gmail.com",
   github: "https://github.com/JoelA510",
   linkedin: "https://linkedin.com/in/joel-abraham-cv",
+  // "How I work" — three commitments.
   traits: [
     {
-      title: "Architecture First",
+      title: "Architecture first",
       description:
-        "Prioritizing secure system design, scalable data models, and API blueprints before generating code.",
-      glyph: "\u25E3",
+        "Secure system design, scalable data models, and API blueprints come before any code is generated. The plan is the product; the code follows it.",
     },
     {
-      title: "Agentic Orchestration",
+      title: "Directed, not delegated",
       description:
-        "Mastery of steering complex LLM toolchains via test-driven constraints and precise prompt engineering.",
-      glyph: "\u25CE",
+        "AI toolchains are steered through test-driven constraints and precise prompts. The agents execute; they don't decide.",
     },
     {
-      title: "Rigorous Validation",
+      title: "Verified before shipped",
       description:
-        "Enforcing quality through BDD frameworks and E2E Playwright suites to catch AI hallucinations early.",
-      glyph: "\u25C8",
+        "BDD frameworks and end-to-end Playwright suites catch AI mistakes early — and every change still ends with a human review.",
     },
   ] satisfies Trait[],
 };
@@ -70,7 +68,16 @@ export const PROJECTS: Project[] = [
       { name: "Vitest + Playwright BDD", description: "Behavioral specs that gate AI output" },
     ],
     remediation:
-      "1. AI generates roster algorithm \u2794 2. Vitest unit suite checks distribution invariants \u2794 3. AI refines balancing logic against failures \u2794 4. Human review of edge cases before merge.",
+      "AI generates the roster algorithm → the Vitest suite checks distribution invariants → AI refines the balancing logic against failures → I review the edge cases before merge.",
+    architecture: `[USER INPUT] ---> [REACT 19 FRONTEND]
+                        |
+                        v
+                [ALGORITHMIC ENGINE]
+                (Roster Generation)
+                        |
+                        v
+                [SUPABASE BACKEND]
+                  (RLS Enforced)`,
     previewUrl: "https://squadlogic.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/SquadLogic",
     liveUrl: "https://squadlogic.secureyour.tech/",
@@ -97,7 +104,19 @@ export const PROJECTS: Project[] = [
       { name: "Playwright BDD", description: "Behavioral spec gate for every AI-generated feature" },
     ],
     remediation:
-      "1. AI generates feature against the repo-context map \u2794 2. Playwright BDD specs run \u2794 3. AI reads failures + revises \u2794 4. Human review of the final patch.",
+      "AI generates a feature against the repo-context map → the Playwright BDD specs run → AI reads the failures and revises → I review the final patch.",
+    architecture: `[AI AGENTS] <---> [REPO CONTEXT (.agent/rules)]
+                        |
+                        v
+                [CODE GENERATION]
+                        |
+                        v
+                [PLAYWRIGHT BDD SUITE]
+                        | (Fail)
+                        +---> [AI REMEDIATION LOOP]
+                        | (Pass)
+                        v
+                [HUMAN SECURITY AUDIT]`,
     previewUrl: "https://planterplan.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/PlanterPlan-Alpha",
     liveUrl: "https://planterplan.secureyour.tech",
@@ -123,7 +142,16 @@ export const PROJECTS: Project[] = [
       { name: "Claude Code", description: "RLS policy + edge function authoring" },
     ],
     remediation:
-      "1. AI drafts RLS policies + RPCs \u2794 2. Local Supabase test suite runs \u2794 3. AI analyzes permission leaks \u2794 4. Human review before policy ships.",
+      "AI drafts RLS policies and RPCs → the local Supabase test suite runs → AI analyzes permission leaks → I review before any policy ships.",
+    architecture: `[CLIENT (React Native)] ---> [API GATEWAY (Supabase)]
+                                    |
+                            +-------+-------+
+                            |               |
+                            v               v
+                    [EDGE FUNCTIONS]  [POSTGRES DB]
+                            |               |
+                            v               v
+                    [AI SERVICES]     [RLS POLICIES]`,
     previewUrl: "https://www.ai-advocate.org/",
     githubUrl: "https://github.com/JoelA510/AIAdvocate",
     liveUrl: "https://www.ai-advocate.org/",
@@ -148,7 +176,15 @@ export const PROJECTS: Project[] = [
       { name: "Zod", description: "AI-generated runtime type guards at every boundary" },
     ],
     remediation:
-      "1. AI drafts Zod schemas + endpoints \u2794 2. Integration tests run against Neon + ParadeDB \u2794 3. AI analyzes type + retrieval mismatches \u2794 4. Human review of validation layers before merge.",
+      "AI drafts Zod schemas and endpoints → integration tests run against Neon and ParadeDB → AI analyzes type and retrieval mismatches → I review the validation layers before merge.",
+    architecture: `[LOGISTICS DATA] ---> [HONO API (Node.js)]
+                                |
+                                v
+                        [PRISMA ORM]
+                                |
+                                v
+                        [PARADEDB]
+                (Hybrid Search: BM25 + Vector)`,
     previewUrl: "https://formwaypoint.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/FormWaypoint",
     liveUrl: "https://formwaypoint.secureyour.tech",

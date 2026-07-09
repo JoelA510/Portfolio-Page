@@ -1,9 +1,14 @@
 import "@testing-library/jest-dom/vitest";
 import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
+import {
+  installFakeIntersectionObserver,
+  resetFakeIntersectionObserver,
+} from "./intersectionObserverMock";
 
 afterEach(() => {
   cleanup();
+  resetFakeIntersectionObserver();
 });
 
 // happy-dom doesn't implement matchMedia; stub it for components that call it
@@ -22,18 +27,8 @@ if (!window.matchMedia) {
     }) as MediaQueryList;
 }
 
-// IntersectionObserver isn't needed in jsdom/happy-dom by default but some
-// hooks call it unconditionally. Stub a no-op observer.
-if (!window.IntersectionObserver) {
-  window.IntersectionObserver = class {
-    readonly root = null;
-    readonly rootMargin = "";
-    readonly thresholds: readonly number[] = [];
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-    takeRecords() {
-      return [];
-    }
-  } as unknown as typeof IntersectionObserver;
-}
+// happy-dom doesn't implement IntersectionObserver. Install a controllable
+// fake (see intersectionObserverMock.ts) so hooks built on it — like
+// src/App.tsx's useScrollSpy — are actually exercisable by tests, not just
+// silently inert.
+installFakeIntersectionObserver();

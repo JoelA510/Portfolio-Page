@@ -1,5 +1,4 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertCircle } from 'lucide-react';
 
 interface Props {
   children?: ReactNode;
@@ -36,11 +35,10 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="border border-red-200 dark:border-red-900/50 p-4 sm:p-6 bg-red-50 dark:bg-red-950/20 rounded-2xl flex flex-col items-center justify-center text-center min-h-[300px]">
-          <AlertCircle className="w-10 h-10 text-red-500 dark:text-red-400 mb-3" />
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">Something went wrong</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-sm">
-            We encountered an error loading this project. Please try refreshing the page.
+        <div className="error-boundary">
+          <p className="error-boundary-title">Something went wrong</p>
+          <p className="error-boundary-body">
+            We encountered an error loading this page. Please try refreshing.
           </p>
         </div>
       );
