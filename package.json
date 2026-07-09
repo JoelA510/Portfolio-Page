@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
-    "@upstash/ratelimit": "^2.0.8",
-    "@upstash/redis": "^1.37.0",
     "@vitejs/plugin-react": "^5.0.4",
     "lucide-react": "^0.546.0",
     "react": "^19.0.0",
@@ -29,7 +27,6 @@
     "@types/node": "^22.14.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vercel/node": "^5.7.12",
     "@vitest/ui": "^4.1.4",
     "happy-dom": "^20.9.0",
     "tailwindcss": "^4.1.14",
