@@ -2,12 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 
 export type Theme = "dark" | "light";
 
-// Keep in sync with --paper in src/index.css.
-const PAPER_BY_THEME: Record<Theme, string> = {
-  light: "#FAF9F6",
-  dark: "#161613",
-};
-
 export function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
@@ -35,13 +29,21 @@ export function useTheme(): [Theme, () => void] {
     }
     document.documentElement.setAttribute("data-theme", theme);
 
-    // index.html's single (non-media-scoped) theme-color meta needs to track
-    // the explicit theme, not just the OS preference — otherwise mobile
-    // browser chrome disagrees with the page once the user toggles. The
-    // pre-mount script sets its initial value; this keeps it live.
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", PAPER_BY_THEME[theme]);
+    // index.html keeps two prefers-color-scheme-scoped theme-color metas so
+    // mobile browser chrome is correct via pure CSS with no JS at all. Once
+    // the user has an explicit override, both tags' content is set to the
+    // same color — whichever one the OS is currently matching then shows
+    // the right value regardless of which query "wins". Read --paper live
+    // (rather than hardcoding it again here) so this can't drift from the
+    // token that actually painted the page.
+    const paper = getComputedStyle(document.documentElement)
+      .getPropertyValue("--paper")
+      .trim();
+    if (paper) {
+      document
+        .querySelectorAll('meta[name="theme-color"]')
+        .forEach((meta) => meta.setAttribute("content", paper));
+    }
   }, [theme]);
 
   const toggle = useCallback(

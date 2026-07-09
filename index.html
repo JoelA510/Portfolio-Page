@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <!-- Unscoped from prefers-color-scheme so it can track the user's explicit
-         theme override, not just the OS preference — see the pre-mount script
-         below (initial paint) and src/hooks/useTheme.ts (kept live on toggle). -->
-    <meta name="theme-color" content="#161613" />
+    <!-- Two tags so the correct color shows via pure CSS media-matching with
+         no JS at all (matches the OS preference by default, same as before
+         theme toggling existed). Once the user has an explicit override, the
+         pre-mount script below and src/hooks/useTheme.ts set BOTH tags'
+         content to the same color — whichever one the OS is currently
+         matching then renders that color regardless of which query "wins",
+         so an explicit choice that differs from the OS still displays
+         correctly, without ever requiring JS to run. -->
+    <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)" />
 
     <title>Joel Abraham — AI-Augmented Software Engineer</title>
     <meta
@@ -68,8 +74,16 @@
       CSS tokens live under :root[data-theme="..."], so the attribute must be
       set before first paint. Reads the same localStorage key as
       src/hooks/useTheme.ts ("best-theme"); falls back to OS preference.
-      Also seeds the theme-color meta above so mobile browser chrome matches
-      on first paint; kept in sync afterwards by useTheme.ts (--paper values).
+      Also seeds both theme-color metas above so mobile browser chrome
+      matches on first paint when there's a stored override that differs
+      from the OS; kept in sync afterwards by useTheme.ts. This literal color
+      map is unavoidable here — it's a synchronous bootstrap script that runs
+      before src/index.css (and its --paper token) has loaded, specifically
+      so it can set data-theme before first paint. Keep in sync with --paper
+      in src/index.css. querySelectorAll + forEach is used (rather than a
+      single querySelector) so a missing/renamed meta tag is a silent no-op,
+      not a thrown error that would fall into the catch below and discard
+      the theme this script just resolved.
     -->
     <script>
       (function () {
@@ -80,7 +94,10 @@
             t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
           }
           document.documentElement.setAttribute("data-theme", t);
-          document.querySelector('meta[name="theme-color"]').setAttribute("content", PAPER[t]);
+          var metas = document.querySelectorAll('meta[name="theme-color"]');
+          for (var i = 0; i < metas.length; i++) {
+            metas[i].setAttribute("content", PAPER[t]);
+          }
         } catch (_) {
           document.documentElement.setAttribute("data-theme", "dark");
         }

@@ -23,6 +23,7 @@
   --w: 1080px;
   --pad: clamp(20px, 4vw, 48px);
   --footer-h: 52px;
+  --nav-h: 60px;
 
   color-scheme: light;
 }
@@ -46,7 +47,7 @@
 
 /* ================= base ================= */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -97,7 +98,7 @@ img, svg { max-width: 100%; }
 }
 .nav-in {
   display: flex; align-items: center; justify-content: space-between;
-  height: 60px;
+  height: var(--nav-h);
 }
 .nav-name {
   font-weight: 700; font-size: 15px; letter-spacing: -0.01em;
@@ -275,11 +276,57 @@ img, svg { max-width: 100%; }
   background: var(--surface);
 }
 .p-frame-err p { margin: 0; font-size: 13px; max-width: 34ch; }
-.p-frame-err a { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+/* weight 400 only — matches every other --mono site; the family isn't
+   fetched at heavier weights, so anything bolder here renders faux-bold. */
+.p-frame-err a { font-family: var(--mono); font-size: 12px; }
 .p-frame-note {
   font-family: var(--mono); font-size: 11px; color: var(--ink-3);
   margin-top: 8px;
 }
+.p-frame iframe {
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.p-frame.is-loaded iframe { opacity: 1; }
+/* tap-to-interact overlay: while showing, the iframe's pointer-events are
+   off (see ProjectRow.tsx) so wheel/mouse events pass through to the page. */
+.p-frame-tap {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 14px;
+  background: transparent;
+  border: 0; cursor: pointer;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.4px;
+  color: var(--ink-3);
+}
+.p-frame-tap-label {
+  padding: 5px 10px;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+.p-frame-tap:hover .p-frame-tap-label,
+.p-frame-tap:focus-visible .p-frame-tap-label { border-color: var(--ink-3); color: var(--ink); }
+.p-frame-release {
+  position: absolute; top: 10px; right: 10px; z-index: 1;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-2);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.p-frame-release kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  font-family: inherit; font-size: 10px;
+  background: var(--surface);
+}
+.p-frame-release:hover, .p-frame-release:focus-visible { border-color: var(--ink-3); color: var(--ink); }
 .p-arch {
   font-family: var(--mono);
   font-size: 12.5px;

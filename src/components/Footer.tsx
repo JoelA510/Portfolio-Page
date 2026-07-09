@@ -20,8 +20,25 @@ export function Footer() {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
+    let id: number | undefined;
+    const start = () => {
+      setNow(new Date());
+      id = window.setInterval(() => setNow(new Date()), 1000);
+    };
+    const stop = () => window.clearInterval(id);
+
+    // Don't tick a clock nobody's looking at — pause while the tab is
+    // hidden/backgrounded and refresh immediately on return.
+    if (!document.hidden) start();
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   return (

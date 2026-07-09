@@ -12,6 +12,8 @@ const LOAD_TIMEOUT_MS = 9000;
 
 const IFRAME_SANDBOX =
   "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation";
+const IFRAME_ALLOW =
+  "accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share";
 
 /**
  * One hairline-ruled case-study row: mono meta column (stack, AI tooling)
@@ -26,7 +28,13 @@ export function ProjectRow({ project, index }: Props) {
   const [previewRequested, setPreviewRequested] = useState(false);
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [frameTimedOut, setFrameTimedOut] = useState(false);
+  // While false, pointer/wheel events pass through the iframe so the page
+  // keeps scrolling normally; the user opts in by clicking the tap overlay.
+  const [interactive, setInteractive] = useState(false);
   const timeoutRef = useRef<number | undefined>(undefined);
+  // Bumping this re-arms the watchdog — used to retry after a timeout
+  // without waiting for the still-mounted iframe to load on its own.
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!previewRequested || frameLoaded) return;
@@ -34,7 +42,16 @@ export function ProjectRow({ project, index }: Props) {
       setFrameTimedOut(true);
     }, LOAD_TIMEOUT_MS);
     return () => window.clearTimeout(timeoutRef.current);
-  }, [previewRequested, frameLoaded]);
+  }, [previewRequested, frameLoaded, retryKey]);
+
+  useEffect(() => {
+    if (!interactive) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setInteractive(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [interactive]);
 
   const num = String(index + 1).padStart(2, "0");
 
@@ -73,7 +90,15 @@ export function ProjectRow({ project, index }: Props) {
             aria-expanded={previewOpen}
             aria-controls={`pv-${project.id}`}
             onClick={() => {
-              setPreviewOpen((o) => !o);
+              const opening = !previewOpen;
+              // Re-opening after a stalled load is a natural "try again":
+              // give it a fresh watchdog window instead of showing the
+              // same stale error forever.
+              if (opening && frameTimedOut) {
+                setFrameTimedOut(false);
+                setRetryKey((k) => k + 1);
+              }
+              setPreviewOpen(opening);
               setPreviewRequested(true);
             }}
           >
@@ -114,13 +139,37 @@ export function ProjectRow({ project, index }: Props) {
                 loading="lazy"
                 referrerPolicy="no-referrer"
                 sandbox={IFRAME_SANDBOX}
+                allow={IFRAME_ALLOW}
                 title={`${project.title} live preview`}
+                style={{ pointerEvents: interactive ? "auto" : "none" }}
                 onLoad={() => {
                   window.clearTimeout(timeoutRef.current);
                   setFrameLoaded(true);
                   setFrameTimedOut(false);
                 }}
               />
+            )}
+            {frameLoaded && !interactive && (
+              <button
+                type="button"
+                className="p-frame-tap"
+                onClick={() => setInteractive(true)}
+                aria-label={`Interact with the ${project.title} preview`}
+              >
+                <span className="p-frame-tap-label">
+                  Click to interact · scroll passes through
+                </span>
+              </button>
+            )}
+            {frameLoaded && interactive && (
+              <button
+                type="button"
+                className="p-frame-release"
+                onClick={() => setInteractive(false)}
+                aria-label="Release interaction with the preview"
+              >
+                <kbd>Esc</kbd> release
+              </button>
             )}
           </div>
           <p className="p-frame-note">

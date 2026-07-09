@@ -37,6 +37,12 @@ describe("ProjectRow", () => {
       "sandbox",
       expect.stringContaining("allow-storage-access-by-user-activation"),
     );
+    // Without this, embedded apps can't use clipboard-write, fullscreen,
+    // autoplay, etc. — features the deployed projects actually rely on.
+    expect(frame).toHaveAttribute(
+      "allow",
+      expect.stringContaining("clipboard-write"),
+    );
 
     // Hiding keeps the iframe mounted so re-opening doesn't reload the app.
     await user.click(toggle);
@@ -83,5 +89,73 @@ describe("ProjectRow", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("re-arms the watchdog and clears the error when reopened after a timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      render(<ProjectRow project={project} index={0} />);
+
+      fireEvent.click(screen.getByRole("button", { name: "View preview" }));
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9000);
+      });
+      expect(
+        screen.getByText(/taking longer than expected to load/i),
+      ).toBeInTheDocument();
+
+      // Close the panel, then reopen it — this is the "try again" gesture.
+      fireEvent.click(screen.getByRole("button", { name: "Hide preview" }));
+      fireEvent.click(screen.getByRole("button", { name: "View preview" }));
+
+      expect(
+        screen.queryByText(/taking longer than expected to load/i),
+      ).not.toBeInTheDocument();
+      expect(screen.getByText(/Loading live app/i)).toBeInTheDocument();
+
+      // The watchdog must have been re-armed with a fresh window, not left
+      // permanently disarmed after firing once.
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(9000);
+      });
+      expect(
+        screen.getByText(/taking longer than expected to load/i),
+      ).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("passes pointer/wheel events through until the user opts into interacting, and Escape releases", async () => {
+    const user = userEvent.setup();
+    render(<ProjectRow project={project} index={0} />);
+
+    await user.click(screen.getByRole("button", { name: "View preview" }));
+    const frame = document.querySelector("iframe") as HTMLIFrameElement;
+
+    // Simulate a successful load without relying on happy-dom's disabled
+    // iframe navigation (see vite.config.ts) — dispatch the same 'load'
+    // event the browser would fire, which is all the component listens for.
+    fireEvent.load(frame);
+
+    expect(document.querySelector(".p-frame")).toHaveClass("is-loaded");
+    expect(frame.style.pointerEvents).toBe("none");
+
+    const tap = screen.getByRole("button", {
+      name: `Interact with the ${project.title} preview`,
+    });
+    await user.click(tap);
+    expect(frame.style.pointerEvents).toBe("auto");
+    expect(
+      screen.getByRole("button", { name: "Release interaction with the preview" }),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(frame.style.pointerEvents).toBe("none");
+    expect(
+      screen.getByRole("button", {
+        name: `Interact with the ${project.title} preview`,
+      }),
+    ).toBeInTheDocument();
   });
 });

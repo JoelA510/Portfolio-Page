@@ -39,11 +39,15 @@ function useScrollSpy(): string | null {
 }
 
 export default function App() {
-  const [, toggleTheme] = useTheme();
+  const [theme, toggleTheme] = useTheme();
   const activeSection = useScrollSpy();
 
   const navLink = (id: (typeof NAV_SECTIONS)[number], label: string) => (
-    <a href={`#${id}`} className={activeSection === id ? "is-active" : undefined}>
+    <a
+      href={`#${id}`}
+      className={activeSection === id ? "is-active" : undefined}
+      aria-current={activeSection === id ? "location" : undefined}
+    >
       {label}
     </a>
   );
@@ -66,11 +70,11 @@ export default function App() {
             <button
               type="button"
               className="theme-btn tip"
-              data-tip="Theme"
+              data-tip={theme === "dark" ? "Light mode" : "Dark mode"}
               aria-label="Toggle theme"
               onClick={toggleTheme}
             >
-              ◐
+              {theme === "dark" ? "☀" : "☾"}
             </button>
             <a className="nav-cta" href={`mailto:${PORTFOLIO.email}`}>
               Email me
@@ -104,7 +108,7 @@ export default function App() {
       </header>
 
       <main>
-        <section className="section wrap" id="work" aria-labelledby="work-h">
+        <section className="section wrap" id="work" aria-labelledby="work-h" tabIndex={-1}>
           <div className="section-head">
             <h2 id="work-h">Selected work</h2>
             <span className="label">{PROJECTS.length} projects · all deployed</span>
