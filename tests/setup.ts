@@ -9,6 +9,7 @@ import {
 afterEach(() => {
   cleanup();
   resetFakeIntersectionObserver();
+  localStorage.clear();
 });
 
 // happy-dom doesn't implement matchMedia; stub it for components that call it
