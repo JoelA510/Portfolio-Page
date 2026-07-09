@@ -1,14 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { DomainSection } from "./components/DomainSection";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Footer } from "./components/Footer";
-import { ProjectRow } from "./components/ProjectRow";
-import { PORTFOLIO, PROJECTS } from "./data/portfolio";
+import { HomeSection } from "./components/HomeSection";
+import { SoftwareSection } from "./components/SoftwareSection";
+import { TabBar } from "./components/TabBar";
+import { getDomain } from "./data/domains";
+import { PORTFOLIO } from "./data/portfolio";
+import { useActiveTab } from "./hooks/useActiveTab";
 import { useTheme } from "./hooks/useTheme";
 
 const NAV_SECTIONS = ["work", "approach", "contact"] as const;
 
-/** Highlight the nav link for the section currently in view. */
-function useScrollSpy(): string | null {
+/**
+ * Highlight the nav link for the section currently in view. Re-runs on tab
+ * change: switching tabs unmounts the old #work/#approach/#contact nodes and
+ * mounts fresh ones, so the observer must re-query and re-observe them.
+ */
+function useScrollSpy(activeTab: string): string | null {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,14 +42,24 @@ function useScrollSpy(): string | null {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [activeTab]);
 
   return active;
 }
 
 export default function App() {
   const [theme, toggleTheme] = useTheme();
-  const activeSection = useScrollSpy();
+  const [activeTab, setActiveTab] = useActiveTab();
+  const activeSection = useScrollSpy(activeTab);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0 });
+  }, [activeTab]);
 
   const navLink = (id: (typeof NAV_SECTIONS)[number], label: string) => (
     <a
@@ -51,6 +70,8 @@ export default function App() {
       {label}
     </a>
   );
+
+  const domain = getDomain(activeTab);
 
   return (
     <ErrorBoundary>
@@ -83,82 +104,13 @@ export default function App() {
         </div>
       </nav>
 
-      <header className="hero wrap" id="top">
-        <p className="hero-status">
-          <span className="dot" aria-hidden="true" />
-          Open to full-time roles and project work
-        </p>
-        <h1>Software engineer, working with AI as a disciplined collaborator.</h1>
-        <p className="hero-lede">
-          I build production software by directing AI agents through constraints
-          I define up front — architecture, schemas, and test suites. The agents
-          move quickly; the judgment and the accountability are mine.
-        </p>
-        <div className="hero-links">
-          <a className="btn btn-primary" href={`mailto:${PORTFOLIO.email}`}>
-            Get in touch
-          </a>
-          <a className="btn btn-quiet" href={PORTFOLIO.github} target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <a className="btn btn-quiet" href={PORTFOLIO.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-        </div>
-      </header>
+      <TabBar active={activeTab} onChange={setActiveTab} position="top" />
 
-      <main>
-        <section className="section wrap" id="work" aria-labelledby="work-h" tabIndex={-1}>
-          <div className="section-head">
-            <h2 id="work-h">Selected work</h2>
-            <span className="label">{PROJECTS.length} projects · all deployed</span>
-          </div>
-          {PROJECTS.map((project, i) => (
-            <ProjectRow key={project.id} project={project} index={i} />
-          ))}
-        </section>
+      {activeTab === "home" && <HomeSection onNavigate={setActiveTab} />}
+      {activeTab === "software" && <SoftwareSection />}
+      {domain && <DomainSection domain={domain} />}
 
-        <section className="section wrap" id="approach" aria-labelledby="approach-h">
-          <div className="section-head">
-            <h2 id="approach-h">How I work</h2>
-            <span className="label">Three commitments</span>
-          </div>
-          <ol className="approach-list">
-            {PORTFOLIO.traits.map((trait, i) => (
-              <li key={trait.title}>
-                <span className="a-num">{String(i + 1).padStart(2, "0")}</span>
-                <div className="a-body">
-                  <h3>{trait.title}</h3>
-                  <p>{trait.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="contact wrap" id="contact" aria-labelledby="contact-h">
-          <span className="label">Contact</span>
-          <h2 className="contact-head" id="contact-h">
-            Looking for an engineer who ships with AI, carefully?
-          </h2>
-          <a className="contact-email" href={`mailto:${PORTFOLIO.email}`}>
-            {PORTFOLIO.email}
-          </a>
-          <div className="contact-notes">
-            <span>Remote · UTC−8</span>
-            <span>Replies within 24h on weekdays</span>
-            <span>Full-time · contract · rescues</span>
-          </div>
-          <div className="contact-links">
-            <a className="btn btn-quiet" href={PORTFOLIO.github} target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-            <a className="btn btn-quiet" href={PORTFOLIO.linkedin} target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
-          </div>
-        </section>
-      </main>
+      <TabBar active={activeTab} onChange={setActiveTab} position="bottom" />
 
       <Footer />
     </ErrorBoundary>

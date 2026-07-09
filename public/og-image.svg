@@ -17,18 +17,18 @@
     Joel Abraham
   </text>
   <text x="80" y="272" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="32" font-weight="500" fill="#A8A69E" letter-spacing="-0.5">
-    AI-Augmented Software Engineer
+    Systems Reliability &amp; Automation Specialist
   </text>
   <g transform="translate(80 360)">
     <text font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="28" font-weight="500" fill="#EDEBE4" letter-spacing="-0.3">
-      <tspan x="0" dy="0">Software engineer, working with AI as a</tspan>
-      <tspan x="0" dy="40">disciplined collaborator.</tspan>
+      <tspan x="0" dy="0">Bridging code, infrastructure, and the</tspan>
+      <tspan x="0" dy="40">physical systems that keep things running.</tspan>
     </text>
   </g>
   <g transform="translate(80 570)">
     <rect width="48" height="2" fill="url(#accent)"/>
     <text x="64" y="7" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="13" fill="#8A8880" letter-spacing="2">
-      SQUADLOGIC · PLANTERPLAN · AI ADVOCATE · FORMWAYPOINT
+      IT · CYBERSECURITY · LOGISTICS · SOFTWARE · FACILITIES
     </text>
   </g>
 </svg>
