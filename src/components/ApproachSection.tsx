@@ -1,4 +1,4 @@
-type Trait = { title: string; description: string };
+import type { Trait } from "../data/portfolio";
 
 type Props = {
   traits: Trait[];

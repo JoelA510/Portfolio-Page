@@ -5,7 +5,7 @@ import { Footer } from "./components/Footer";
 import { HomeSection } from "./components/HomeSection";
 import { SoftwareSection } from "./components/SoftwareSection";
 import { TabBar } from "./components/TabBar";
-import { getDomain } from "./data/domains";
+import { getDomain, type TabId } from "./data/domains";
 import { PORTFOLIO } from "./data/portfolio";
 import { useActiveTab } from "./hooks/useActiveTab";
 import { useTheme } from "./hooks/useTheme";
@@ -16,11 +16,14 @@ const NAV_SECTIONS = ["work", "approach", "contact"] as const;
  * Highlight the nav link for the section currently in view. Re-runs on tab
  * change: switching tabs unmounts the old #work/#approach/#contact nodes and
  * mounts fresh ones, so the observer must re-query and re-observe them.
+ * Resets `active` synchronously first so a highlight from the previous tab
+ * doesn't linger until the new IntersectionObserver's first async callback.
  */
 function useScrollSpy(activeTab: string): string | null {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
+    setActive(null);
     if (!("IntersectionObserver" in window)) return;
     const els = NAV_SECTIONS.map((id) => document.getElementById(id)).filter(
       (el): el is HTMLElement => el !== null,
@@ -51,15 +54,28 @@ export default function App() {
   const [theme, toggleTheme] = useTheme();
   const [activeTab, setActiveTab] = useActiveTab();
   const activeSection = useScrollSpy(activeTab);
-  const isFirstRender = useRef(true);
+  const previousTab = useRef(activeTab);
 
+  // Move focus to the new tab's main content on every real tab switch (not
+  // on initial mount, when stealing focus would be unexpected) — the same
+  // #work target the skip-link already uses. Comparing the previous value
+  // (rather than a boolean "have I run yet" ref) keeps this StrictMode-safe:
+  // dev-mode's double-invoke replays the same effect closure without
+  // resetting refs, which would otherwise fire this on first mount too.
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+    if (previousTab.current !== activeTab) {
+      document.getElementById("work")?.focus({ preventScroll: true });
     }
-    window.scrollTo({ top: 0, behavior: "instant" });
+    previousTab.current = activeTab;
   }, [activeTab]);
+
+  // Scroll and tab-state change together, synchronously, from the same user
+  // gesture — no effect/ref bookkeeping needed to distinguish "real switch"
+  // from "initial mount" the way a scroll-on-tab-change effect would.
+  const changeTab = (id: TabId) => {
+    setActiveTab(id);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
 
   const navLink = (id: (typeof NAV_SECTIONS)[number], label: string) => (
     <a
@@ -104,13 +120,17 @@ export default function App() {
         </div>
       </nav>
 
-      <TabBar active={activeTab} onChange={setActiveTab} position="top" />
+      <TabBar active={activeTab} onChange={changeTab} position="top" />
 
-      {activeTab === "home" && <HomeSection onNavigate={setActiveTab} />}
-      {activeTab === "software" && <SoftwareSection />}
-      {domain && <DomainSection domain={domain} />}
+      {/* Keyed on activeTab so a crash in one tab's content resets on the
+          next switch instead of permanently blanking every future tab. */}
+      <ErrorBoundary key={activeTab}>
+        {activeTab === "home" && <HomeSection onNavigate={changeTab} />}
+        {activeTab === "software" && <SoftwareSection />}
+        {domain && <DomainSection domain={domain} />}
+      </ErrorBoundary>
 
-      <TabBar active={activeTab} onChange={setActiveTab} position="bottom" />
+      <TabBar active={activeTab} onChange={changeTab} position="bottom" />
 
       <Footer />
     </ErrorBoundary>

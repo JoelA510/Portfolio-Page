@@ -1,7 +1,7 @@
-import { HOME, HUB_CARDS, type TabId } from "../data/domains";
-import { PORTFOLIO } from "../data/portfolio";
+import { getTabLabel, HOME, HUB_CARDS, type TabId } from "../data/domains";
 import { ApproachSection } from "./ApproachSection";
 import { ContactSection } from "./ContactSection";
+import { HeroHeader } from "./HeroHeader";
 
 type Props = {
   onNavigate: (id: TabId) => void;
@@ -11,25 +11,7 @@ type Props = {
 export function HomeSection({ onNavigate }: Props) {
   return (
     <>
-      <header className="hero wrap" id="top">
-        <p className="hero-status">
-          <span className="dot" aria-hidden="true" />
-          {HOME.heroStatus}
-        </p>
-        <h1>{HOME.heroTitle}</h1>
-        <p className="hero-lede">{HOME.heroLede}</p>
-        <div className="hero-links">
-          <a className="btn btn-primary" href={`mailto:${PORTFOLIO.email}`}>
-            Get in touch
-          </a>
-          <a className="btn btn-quiet" href={PORTFOLIO.github} target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <a className="btn btn-quiet" href={PORTFOLIO.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-        </div>
-      </header>
+      <HeroHeader status={HOME.heroStatus} title={HOME.heroTitle} lede={HOME.heroLede} />
 
       <main>
         <section className="section wrap" id="work" aria-labelledby="work-h" tabIndex={-1}>
@@ -37,29 +19,32 @@ export function HomeSection({ onNavigate }: Props) {
             <h2 id="work-h">{HOME.workHeading}</h2>
             <span className="label">{HOME.workLabel}</span>
           </div>
-          {HUB_CARDS.map((card, i) => (
-            <article className="project" id={`hub-${card.tabId}`} key={card.tabId}>
-              <div className="p-meta">
-                <span className="p-index">{String(i + 1).padStart(2, "0")}</span>
-                <dl>
-                  <div>
-                    <dt>Focus</dt>
-                    <dd>{card.focus}</dd>
-                  </div>
-                </dl>
-              </div>
-              <div className="p-body">
-                <h3>{card.name}</h3>
-                <p className="p-tag">{card.teaser}</p>
-                <p className="p-desc">{card.blurb}</p>
-                <div className="p-actions">
-                  <button type="button" className="p-toggle" onClick={() => onNavigate(card.tabId)}>
-                    View {card.name} work →
-                  </button>
+          {HUB_CARDS.map((card, i) => {
+            const label = getTabLabel(card.tabId);
+            return (
+              <article className="project" id={`hub-${card.tabId}`} key={card.tabId}>
+                <div className="p-meta">
+                  <span className="p-index">{String(i + 1).padStart(2, "0")}</span>
+                  <dl>
+                    <div>
+                      <dt>Focus</dt>
+                      <dd>{card.focus}</dd>
+                    </div>
+                  </dl>
                 </div>
-              </div>
-            </article>
-          ))}
+                <div className="p-body">
+                  <h3>{label}</h3>
+                  <p className="p-tag">{card.teaser}</p>
+                  <p className="p-desc">{card.blurb}</p>
+                  <div className="p-actions">
+                    <button type="button" className="p-toggle" onClick={() => onNavigate(card.tabId)}>
+                      View {label} work →
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </section>
 
         <ApproachSection traits={HOME.traits} />

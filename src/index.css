@@ -24,6 +24,7 @@
   --pad: clamp(20px, 4vw, 48px);
   --footer-h: 52px;
   --nav-h: 60px;
+  --tabbar-h: 55px;
 
   color-scheme: light;
 }
@@ -47,7 +48,7 @@
 
 /* ================= base ================= */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + var(--tabbar-h) + 16px); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
