@@ -58,7 +58,7 @@ export default function App() {
       isFirstRender.current = false;
       return;
     }
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [activeTab]);
 
   const navLink = (id: (typeof NAV_SECTIONS)[number], label: string) => (

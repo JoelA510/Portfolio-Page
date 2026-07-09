@@ -1,5 +1,7 @@
 import { HOME, HUB_CARDS, type TabId } from "../data/domains";
 import { PORTFOLIO } from "../data/portfolio";
+import { ApproachSection } from "./ApproachSection";
+import { ContactSection } from "./ContactSection";
 
 type Props = {
   onNavigate: (id: TabId) => void;
@@ -51,11 +53,7 @@ export function HomeSection({ onNavigate }: Props) {
                 <p className="p-tag">{card.teaser}</p>
                 <p className="p-desc">{card.blurb}</p>
                 <div className="p-actions">
-                  <button
-                    type="button"
-                    className="p-toggle"
-                    onClick={() => onNavigate(card.tabId as TabId)}
-                  >
+                  <button type="button" className="p-toggle" onClick={() => onNavigate(card.tabId)}>
                     View {card.name} work →
                   </button>
                 </div>
@@ -64,46 +62,8 @@ export function HomeSection({ onNavigate }: Props) {
           ))}
         </section>
 
-        <section className="section wrap" id="approach" aria-labelledby="approach-h">
-          <div className="section-head">
-            <h2 id="approach-h">How I work</h2>
-            <span className="label">Three commitments</span>
-          </div>
-          <ol className="approach-list">
-            {HOME.traits.map((trait, i) => (
-              <li key={trait.title}>
-                <span className="a-num">{String(i + 1).padStart(2, "0")}</span>
-                <div className="a-body">
-                  <h3>{trait.title}</h3>
-                  <p>{trait.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="contact wrap" id="contact" aria-labelledby="contact-h">
-          <span className="label">Contact</span>
-          <h2 className="contact-head" id="contact-h">
-            {HOME.contactHeadline}
-          </h2>
-          <a className="contact-email" href={`mailto:${PORTFOLIO.email}`}>
-            {PORTFOLIO.email}
-          </a>
-          <div className="contact-notes">
-            <span>Remote · UTC−8</span>
-            <span>Replies within 24h on weekdays</span>
-            <span>Full-time · contract · rescues</span>
-          </div>
-          <div className="contact-links">
-            <a className="btn btn-quiet" href={PORTFOLIO.github} target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-            <a className="btn btn-quiet" href={PORTFOLIO.linkedin} target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
-          </div>
-        </section>
+        <ApproachSection traits={HOME.traits} />
+        <ContactSection headline={HOME.contactHeadline} />
       </main>
     </>
   );

@@ -34,8 +34,8 @@ export type Domain = {
   contactHeadline: string;
 };
 
-const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate")!;
-const formWaypoint = PROJECTS.find((p) => p.id === "formwaypoint")!;
+const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate");
+const formWaypoint = PROJECTS.find((p) => p.id === "formwaypoint");
 
 export const CYBERSECURITY: Domain = {
   id: "cybersecurity",
@@ -65,10 +65,12 @@ export const CYBERSECURITY: Domain = {
         "Defined a risk register for product and data risks (PII exposure, access rules) and tied each entry to a control and a monitoring signal.",
         "Anonymous session tokens replace PII entirely — survivors and advocates use the app with zero signup and zero identity exposure.",
       ],
-      links: [
-        { label: "Source", url: aiAdvocate.githubUrl },
-        { label: "Live site", url: aiAdvocate.liveUrl },
-      ],
+      links: aiAdvocate
+        ? [
+            { label: "Source", url: aiAdvocate.githubUrl },
+            { label: "Live site", url: aiAdvocate.liveUrl },
+          ]
+        : undefined,
     },
     {
       id: "cyber-omron",
@@ -235,10 +237,12 @@ export const LOGISTICS: Domain = {
         "Rebuilt a legacy logistics platform into a high-performance monorepo (Hono + Prisma + ParadeDB) with hybrid BM25 + vector search over shipment data.",
         "Kept OCR and field-prediction isolated in a separate Python service so the core API stays cleanly typed end-to-end.",
       ],
-      links: [
-        { label: "Source", url: formWaypoint.githubUrl },
-        { label: "Live site", url: formWaypoint.liveUrl },
-      ],
+      links: formWaypoint
+        ? [
+            { label: "Source", url: formWaypoint.githubUrl },
+            { label: "Live site", url: formWaypoint.liveUrl },
+          ]
+        : undefined,
     },
     {
       id: "logistics-cvsc",
@@ -354,15 +358,15 @@ export const HOME = {
   contactHeadline: "Not sure which hat fits the role you're hiring for?",
 };
 
+export type TabId = "home" | "cybersecurity" | "software" | "it" | "logistics" | "maintenance";
+
 export type HubCard = {
-  tabId: string;
+  tabId: TabId;
   name: string;
   teaser: string;
   blurb: string;
   focus: string;
 };
-
-export type TabId = "home" | "cybersecurity" | "software" | "it" | "logistics" | "maintenance";
 
 export type TabMeta = { id: TabId; navLabel: string };
 
