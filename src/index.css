@@ -1,13 +1,5 @@
 /* Google Fonts are loaded via <link> in index.html so the browser can start
    fetching them before the CSS bundle is parsed — avoids the @import waterfall. */
-@import "tailwindcss";
-
-@variant dark (&:is(.dark *));
-
-@theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Berkeley Mono", "TX02Berkeley Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-}
 
 /* ================= tokens ================= */
 :root {
@@ -21,6 +13,9 @@
   --accent: #4038C8;
   --accent-hover: #2E27A3;
   --ok: #1E7A46;
+  --err: #B3261E;
+  --err-bg: #FBEAE9;
+  --err-border: #F1C6C3;
 
   --sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --mono: 'Berkeley Mono', 'TX02Berkeley Mono', 'JetBrains Mono', ui-monospace, monospace;
@@ -28,6 +23,8 @@
   --w: 1080px;
   --pad: clamp(20px, 4vw, 48px);
   --footer-h: 52px;
+
+  color-scheme: light;
 }
 :root[data-theme="dark"] {
   --paper: #161613;
@@ -40,11 +37,16 @@
   --accent: #8B85F0;
   --accent-hover: #A6A1F5;
   --ok: #4FB87E;
+  --err: #F2B8B5;
+  --err-bg: #3A1F1E;
+  --err-border: #5C2E2C;
+
+  color-scheme: dark;
 }
 
 /* ================= base ================= */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -128,6 +130,20 @@ img, svg { max-width: 100%; }
   display: inline-flex; align-items: center; justify-content: center;
 }
 .theme-btn:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ================= error boundary ================= */
+.error-boundary {
+  border: 1px solid var(--err-border);
+  background: var(--err-bg);
+  border-radius: 12px;
+  padding: 32px 24px;
+  min-height: 240px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+.error-boundary-title { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); }
+.error-boundary-body { margin: 0; font-size: 14px; color: var(--ink-2); max-width: 40ch; }
 
 /* ================= hero ================= */
 .hero { padding-top: clamp(64px, 10vh, 120px); padding-bottom: clamp(48px, 8vh, 88px); }
@@ -234,12 +250,15 @@ img, svg { max-width: 100%; }
   position: relative;
 }
 .p-frame iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
-/* quiet loading affordance while the live-app iframe boots */
+/* quiet loading affordance while the live-app iframe boots. pointer-events
+   is off so it never traps clicks once the iframe underneath is actually
+   interactive (belt-and-braces alongside removing it on load/error). */
 .p-frame-load {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
   color: var(--ink-3);
   font-family: var(--mono); font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+  pointer-events: none;
 }
 .p-frame-load .spin {
   width: 22px; height: 22px; border-radius: 50%;
@@ -247,6 +266,16 @@ img, svg { max-width: 100%; }
   animation: spin 0.9s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+/* shown after the load watchdog times out, in place of the spinner */
+.p-frame-err {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: 24px; text-align: center;
+  color: var(--ink-2);
+  background: var(--surface);
+}
+.p-frame-err p { margin: 0; font-size: 13px; max-width: 34ch; }
+.p-frame-err a { font-family: var(--mono); font-size: 12px; font-weight: 600; }
 .p-frame-note {
   font-family: var(--mono); font-size: 11px; color: var(--ink-3);
   margin-top: 8px;
@@ -341,6 +370,15 @@ img, svg { max-width: 100%; }
   }
   .tip:hover::after, .tip:focus-visible::after {
     opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+  /* the nav sits at the very top of the viewport, so its tooltip must open
+     downward — the shared upward .tip placement would render off-screen */
+  .theme-btn.tip::after {
+    top: calc(100% + 8px); bottom: auto;
+    transform: translateX(-50%) translateY(-3px);
+  }
+  .theme-btn.tip:hover::after, .theme-btn.tip:focus-visible::after {
+    transform: translateX(-50%) translateY(0);
   }
 }
 

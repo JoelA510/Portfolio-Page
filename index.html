@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)" />
+    <!-- Unscoped from prefers-color-scheme so it can track the user's explicit
+         theme override, not just the OS preference — see the pre-mount script
+         below (initial paint) and src/hooks/useTheme.ts (kept live on toggle). -->
+    <meta name="theme-color" content="#161613" />
 
     <title>Joel Abraham — AI-Augmented Software Engineer</title>
     <meta
@@ -25,9 +27,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Only the weights src/index.css actually uses: Jakarta 400/500/600/700
+         upright (no italics, no 300/800), JetBrains Mono 400 (no bold/italic). -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
     />
 
     <meta property="og:type" content="website" />
@@ -64,15 +68,19 @@
       CSS tokens live under :root[data-theme="..."], so the attribute must be
       set before first paint. Reads the same localStorage key as
       src/hooks/useTheme.ts ("best-theme"); falls back to OS preference.
+      Also seeds the theme-color meta above so mobile browser chrome matches
+      on first paint; kept in sync afterwards by useTheme.ts (--paper values).
     -->
     <script>
       (function () {
+        var PAPER = { light: "#FAF9F6", dark: "#161613" };
         try {
           var t = localStorage.getItem("best-theme");
           if (t !== "light" && t !== "dark") {
             t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
           }
           document.documentElement.setAttribute("data-theme", t);
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", PAPER[t]);
         } catch (_) {
           document.documentElement.setAttribute("data-theme", "dark");
         }

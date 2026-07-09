@@ -1,10 +1,9 @@
-import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
@@ -18,6 +17,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
+    // Project preview iframes point at real production URLs; without this,
+    // happy-dom actually fetches them when a test mounts one, making the
+    // suite's speed and outcome depend on live third-party hosts.
+    environmentOptions: {
+      happyDOM: {
+        settings: { disableIframePageLoading: true },
+      },
+    },
     setupFiles: ['./tests/setup.ts'],
     css: false,
   },

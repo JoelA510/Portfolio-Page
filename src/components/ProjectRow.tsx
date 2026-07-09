@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Project } from "../data/portfolio";
 
 type Props = {
   project: Project;
   index: number;
 };
+
+// Some of these are personal/hobby deployments that cold-start; give the
+// iframe a generous window before treating it as unreachable.
+const LOAD_TIMEOUT_MS = 9000;
+
+const IFRAME_SANDBOX =
+  "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-scripts allow-same-origin allow-storage-access-by-user-activation";
 
 /**
  * One hairline-ruled case-study row: mono meta column (stack, AI tooling)
@@ -18,6 +25,16 @@ export function ProjectRow({ project, index }: Props) {
   // re-opening the panel doesn't reload the embedded app.
   const [previewRequested, setPreviewRequested] = useState(false);
   const [frameLoaded, setFrameLoaded] = useState(false);
+  const [frameTimedOut, setFrameTimedOut] = useState(false);
+  const timeoutRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (!previewRequested || frameLoaded) return;
+    timeoutRef.current = window.setTimeout(() => {
+      setFrameTimedOut(true);
+    }, LOAD_TIMEOUT_MS);
+    return () => window.clearTimeout(timeoutRef.current);
+  }, [previewRequested, frameLoaded]);
 
   const num = String(index + 1).padStart(2, "0");
 
@@ -74,10 +91,21 @@ export function ProjectRow({ project, index }: Props) {
         </div>
         <div className="p-panel" id={`pv-${project.id}`} hidden={!previewOpen}>
           <div className={`p-frame${frameLoaded ? " is-loaded" : ""}`}>
-            {!frameLoaded && (
+            {!frameLoaded && !frameTimedOut && (
               <div className="p-frame-load" aria-hidden="true">
                 <span className="spin" />
                 Loading live app
+              </div>
+            )}
+            {frameTimedOut && !frameLoaded && (
+              <div className="p-frame-err">
+                <p>
+                  This preview is taking longer than expected to load — the host
+                  may be blocking framing, or the app is cold-starting.
+                </p>
+                <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                  Open live site ↗
+                </a>
               </div>
             )}
             {previewRequested && (
@@ -85,9 +113,13 @@ export function ProjectRow({ project, index }: Props) {
                 src={project.previewUrl}
                 loading="lazy"
                 referrerPolicy="no-referrer"
-                sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin"
+                sandbox={IFRAME_SANDBOX}
                 title={`${project.title} live preview`}
-                onLoad={() => setFrameLoaded(true)}
+                onLoad={() => {
+                  window.clearTimeout(timeoutRef.current);
+                  setFrameLoaded(true);
+                  setFrameTimedOut(false);
+                }}
               />
             )}
           </div>

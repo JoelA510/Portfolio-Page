@@ -16,11 +16,18 @@ function useScrollSpy(): string | null {
     const els = NAV_SECTIONS.map((id) => document.getElementById(id)).filter(
       (el): el is HTMLElement => el !== null,
     );
+    // Track every section's intersection state (not just the entries in the
+    // latest callback batch) so we can tell "nothing is in view" — e.g. when
+    // the user has scrolled back up above #work — apart from "no change".
+    const intersecting = new Set<string>();
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActive(entry.target.id);
+          if (entry.isIntersecting) intersecting.add(entry.target.id);
+          else intersecting.delete(entry.target.id);
         }
+        const current = NAV_SECTIONS.find((id) => intersecting.has(id));
+        setActive(current ?? null);
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
     );
