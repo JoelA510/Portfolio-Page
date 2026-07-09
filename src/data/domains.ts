@@ -38,7 +38,6 @@ export type Domain = {
 };
 
 const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate");
-const formWaypoint = PROJECTS.find((p) => p.id === "formwaypoint");
 
 const cybersecurityEntries: Entry[] = [
   {
@@ -83,7 +82,7 @@ const cybersecurityEntries: Entry[] = [
     org: "Pilgrim Learning Academy",
     role: "IT System Administrator (Access Control Focus)",
     location: "Castro Valley, CA",
-    period: "Oct 2023 – Present",
+    period: "Oct 2023 – Apr 2025",
     tags: ["Access Control", "SOPs", "Endpoint Security", "Automation"],
     tagline: "Standardized baseline access policies across a 12+ endpoint campus.",
     bullets: [
@@ -136,28 +135,13 @@ const itEntries: Entry[] = [
     org: "Pilgrim Learning Academy",
     role: "IT System Administrator",
     location: "Castro Valley, CA",
-    period: "Oct 2023 – Present",
+    period: "Oct 2023 – Apr 2025",
     tags: ["Endpoint Management", "Python Automation", "Networking", "Windows / ChromeOS / Android"],
     tagline: "Sole IT admin for a K-8 campus running 12+ multi-platform endpoints.",
     bullets: [
       "Developed Python-based provisioning scripts for 12+ endpoints (Windows, Android, ChromeOS), cutting administrative setup time by 40%.",
-      "Configure and secure campus-wide network devices and printing infrastructure, maintaining high availability for educational operations.",
-      "Diagnose network issues end-to-end to minimize downtime, and standardized asset naming and SOPs for hardware lifecycle management.",
-    ],
-  },
-  {
-    id: "it-brightworld",
-    kind: "job",
-    org: "Bright World Preschool",
-    role: "IT Support Technician",
-    location: "Castro Valley, CA",
-    period: "June 2010 – May 2021",
-    tags: ["End-user Support", "Cloud Migration", "VPN / Remote Access"],
-    tagline: "End-user hardware and malware support, plus a migration to cloud infrastructure.",
-    bullets: [
-      "Provided end-user support for hardware failures and malware remediation across the organization.",
-      "Migrated on-prem data to AWS and Google Cloud.",
-      "Implemented VPN and remote-access solutions for distributed staff.",
+      "Configured and secured campus-wide network devices and printing infrastructure, maintaining high availability for educational operations.",
+      "Diagnosed network issues end-to-end to minimize downtime, and standardized asset naming and SOPs for hardware lifecycle management.",
     ],
   },
 ];
@@ -168,7 +152,7 @@ export const IT: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "IT systems administrator who automates the boring parts and documents everything.",
   heroLede:
-    "Over a decade keeping Windows, ChromeOS, Android, and cloud infrastructure patched, provisioned, and running — from a single-admin K-8 campus to cloud migrations. I write the script that saves the next setup 40% of the time, and the SOP that makes it repeatable.",
+    "Hands-on endpoint and network administration across Windows, ChromeOS, and Android — most recently as the sole IT admin for a K-8 campus. I write the script that saves the next setup 40% of the time, and the SOP that makes it repeatable.",
   certifications: ["CompTIA A+", "AWS Certified Cloud Practitioner"],
   workHeading: "Systems & support work",
   workLabel: `${itEntries.length} role${itEntries.length === 1 ? "" : "s"}`,
@@ -215,32 +199,14 @@ const logisticsEntries: Entry[] = [
     role: "Operations Specialist",
     location: "Hayward, CA",
     period: "Aug 2010 – May 2017",
-    tags: ["IBM AS/400 CL", "Legacy Automation", "Fleet Hardware", "Customer Service"],
-    tagline: "Automated reporting on IBM AS/400 and kept a 24/7 scanner fleet running for seven years.",
+    tags: ["WMS Integration", "IBM AS/400 CL", "Dispatch", "Warehouse Operations"],
+    tagline: "Dispatch, customer service, and warehouse operations — plus the AS/400 automation and WMS rollout that modernized them.",
     bullets: [
-      "Mastered IBM AS/400 Control Language to automate manual reporting and data entry, cutting monthly processing time by 37.5%.",
-      "Maintained 24/7 reliability for handheld barcode scanners and terminal equipment in a high-volume logistics environment.",
-      "Coordinated with drivers and customers and resolved 200+ service queries weekly.",
+      "Self-taught IBM AS/400 Control Language and automated manual reporting and data entry, cutting monthly processing time by 37.5%.",
+      "Drove WMS adoption across the warehouse — expanding a system previously used for just 2 of ~100 storage customers into standard practice for inventory tracking.",
+      "Dispatched drivers for daily pickups and resolved 200+ customer queries weekly (shipment lookups and clarifications).",
+      "Ran hands-on warehouse operations: physical inventory management, spot checks, and loading tractor trailers and customer vehicles.",
     ],
-  },
-  {
-    id: "logistics-formwaypoint",
-    kind: "project",
-    org: "FormWaypoint",
-    role: "Backend / Platform Engineer",
-    period: "2026",
-    tags: ["Shipping Document Conversion", "Hybrid Search", "Domain-Driven Design"],
-    tagline: "Logistics teams convert shipping document formats and search shipment archives in sub-second time.",
-    bullets: [
-      "Rebuilt a legacy logistics platform into a high-performance monorepo (Hono + Prisma + ParadeDB) with hybrid BM25 + vector search over shipment data.",
-      "Kept OCR and field-prediction isolated in a separate Python service so the core API stays cleanly typed end-to-end.",
-    ],
-    links: formWaypoint
-      ? [
-          { label: "Source", url: formWaypoint.githubUrl },
-          { label: "Live site", url: formWaypoint.liveUrl },
-        ]
-      : undefined,
   },
   {
     id: "logistics-cvsc",
@@ -263,7 +229,7 @@ export const LOGISTICS: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Logistics operator who turns warehouse chaos into auditable process.",
   heroLede:
-    "Fourteen years bridging physical operations and the systems that track them — from IBM AS/400 automation on a barcode-scanner fleet to real-time compliance dashboards for a global robotics supply chain. I've been the person keeping shipments moving and the numbers honest.",
+    "Fourteen years bridging physical operations and the systems that track them — from IBM AS/400 automation and a warehouse-wide WMS rollout to real-time compliance dashboards for a global robotics supply chain. I've been the person keeping shipments moving and the numbers honest.",
   workHeading: "Logistics & operations work",
   workLabel: `${logisticsEntries.length} roles & projects`,
   entries: logisticsEntries,
@@ -279,9 +245,9 @@ export const LOGISTICS: Domain = {
         "Every KRI/KPI dashboard exists to change a decision in the next ops review, not to look good in a slide.",
     },
     {
-      title: "The fleet doesn't stop for me",
+      title: "The warehouse doesn't stop for me",
       description:
-        "Whether it's an AS/400 terminal or an AMR shipment, uptime is the job — I triage and keep it moving.",
+        "Whether it's an AS/400 workflow or an AMR shipment, the job is keeping it moving — I triage, fix, and follow through.",
     },
   ],
   contactHeadline: "Need someone who turns messy shipping data into a clean, auditable process?",
@@ -294,14 +260,14 @@ const maintenanceEntries: Entry[] = [
     org: "Redwood Chapel Community Church",
     role: "Custodian / Facilities Technician",
     location: "Castro Valley, CA",
-    period: "Feb 2017 – Present",
+    period: "Feb 2017 – Mar 2025",
     tags: ["Electrical", "Plumbing", "Security Hardware", "Preventive Maintenance"],
-    tagline: "Hands-on repairs and security systems across multi-use campus facilities.",
+    tagline: "Hands-on repairs and security systems across two multi-use campuses.",
     bullets: [
       "Executed hands-on repairs for building infrastructure — electrical fixtures (switches, outlets, 120V/240V lighting) and plumbing components.",
-      "Configured and maintained campus surveillance (Hikvision CCTV) and communication systems (Baofeng radios), coordinating vendors for complex high-voltage work.",
-      "Standardized daily/weekly preventive-maintenance checklists and built an inventory tracker, reducing reactive fixes and stockouts.",
-      "Triaged work requests with clear priorities and SLAs across a multi-campus facility footprint.",
+      "Configured and maintained campus surveillance (Hikvision CCTV) and communication systems (Baofeng radios); coordinated vendors for hazardous-waste removal and elevator maintenance.",
+      "Standardized daily/weekly preventive-maintenance checklists and built an inventory tracker covering both campuses, reducing reactive fixes and stockouts.",
+      "Triaged work requests with clear priorities and SLAs across two campuses.",
     ],
   },
 ];
@@ -312,9 +278,9 @@ export const MAINTENANCE: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Facilities technician who keeps buildings, security systems, and the paperwork honest.",
   heroLede:
-    "Nine years maintaining a multi-use campus — electrical fixtures, plumbing, security hardware, and the preventive-maintenance schedules that keep a small fix from becoming an emergency work order.",
+    "Eight years maintaining two multi-use campuses — electrical fixtures, plumbing, security hardware, and the preventive-maintenance schedules that keep a small fix from becoming an emergency work order.",
   workHeading: "Facilities & maintenance work",
-  workLabel: `${maintenanceEntries.length} role${maintenanceEntries.length === 1 ? "" : "s"} · since 2017`,
+  workLabel: `${maintenanceEntries.length} role${maintenanceEntries.length === 1 ? "" : "s"} · 2017 – 2025`,
   entries: maintenanceEntries,
   traits: [
     {
@@ -357,15 +323,15 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "software",
     teaser: "Production software built by directing AI agents through constraints defined up front.",
     blurb:
-      "Four shipped, deployed apps — architecture and test suites first, AI agents executing against them, human review before merge.",
+      "Three shipped, deployed apps — architecture and test suites first, AI agents executing against them, human review before merge.",
     focus: "React · TypeScript · Supabase · AI-directed delivery",
   },
   {
     tabId: "it",
-    teaser: "CompTIA A+, AWS Certified Cloud Practitioner, and a decade of endpoint administration.",
+    teaser: "CompTIA A+, AWS Certified Cloud Practitioner, and hands-on endpoint administration.",
     blurb:
-      "Provisioning automation, network administration, and cloud migrations across Windows, ChromeOS, and Android fleets.",
-    focus: "Endpoint management · automation · cloud",
+      "Provisioning automation, network administration, and endpoint management across Windows, ChromeOS, and Android.",
+    focus: "Endpoint management · automation · networking",
   },
   {
     tabId: "logistics",
@@ -378,7 +344,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "maintenance",
     teaser: "Electrical, plumbing, and security hardware — with a preventive-maintenance mindset.",
     blurb:
-      "Nine years of hands-on facility repairs and surveillance/comms systems management across a multi-use campus.",
+      "Eight years of hands-on facility repairs and surveillance/comms systems management across two multi-use campuses.",
     focus: "Electrical · plumbing · security hardware",
   },
 ];

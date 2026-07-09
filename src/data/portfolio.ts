@@ -156,37 +156,4 @@ export const PROJECTS: Project[] = [
     githubUrl: "https://github.com/JoelA510/AIAdvocate",
     liveUrl: "https://www.ai-advocate.org/",
   },
-  {
-    id: "formwaypoint",
-    title: "FormWaypoint",
-    tagline: "Shipping-document conversion + hybrid search",
-    description:
-      "Logistics teams convert between shipping document formats (Commercial Invoice → Shipper's Letter of Intention, etc.) and search large shipment archives in sub-second time. Hybrid BM25 + vector retrieval lives in ParadeDB; OCR and field prediction run as a separate Python FastAPI service so the API stays cleanly Hono. Domain-driven vertical slices keep each shipment type contained.",
-    tech: [
-      { name: "React 19 + TanStack Router", description: "Frontend with type-safe routing" },
-      { name: "Hono (Node 24)", description: "API in domain-driven vertical slices" },
-      { name: "Prisma 7", description: "ORM (with raw SQL for hybrid search)" },
-      { name: "Postgres (Neon) + ParadeDB", description: "BM25 + vector hybrid search" },
-      { name: "Python 3.14 FastAPI", description: "OCR + field-prediction service" },
-      { name: "Turborepo + pnpm", description: "Monorepo build orchestration" },
-    ],
-    aiStack: [
-      { name: "Antigravity IDE", description: "Monorepo scaffolding + cross-package edits" },
-      { name: "Claude Code", description: "Schema design + raw-SQL search query authoring" },
-      { name: "Zod", description: "AI-generated runtime type guards at every boundary" },
-    ],
-    remediation:
-      "AI drafts Zod schemas and endpoints → integration tests run against Neon and ParadeDB → AI analyzes type and retrieval mismatches → I review the validation layers before merge.",
-    architecture: `[LOGISTICS DATA] ---> [HONO API (Node.js)]
-                                |
-                                v
-                        [PRISMA ORM]
-                                |
-                                v
-                        [PARADEDB]
-                (Hybrid Search: BM25 + Vector)`,
-    previewUrl: "https://formwaypoint.secureyour.tech",
-    githubUrl: "https://github.com/JoelA510/FormWaypoint",
-    liveUrl: "https://formwaypoint.secureyour.tech",
-  },
 ];
