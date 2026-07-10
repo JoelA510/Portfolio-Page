@@ -66,7 +66,7 @@ const cybersecurityEntries: Entry[] = [
     org: "Omron Robotics & Safety Technologies",
     role: "Logistics Specialist II (Risk & Compliance Focus)",
     location: "Pleasanton, CA",
-    period: "2022 – Present",
+    period: "May 2025 – Present",
     tags: ["Compliance", "Risk Mapping", "Audit Evidence", "SQL"],
     tagline: "Led risk/compliance workflows for global shipments across APAC, EMEA, and LATAM.",
     bullets: [
@@ -99,7 +99,7 @@ export const CYBERSECURITY: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Security-minded operator, translating risk into controls that hold.",
   heroLede:
-    "Seven-plus years driving compliance, access control, and risk mapping across regulated logistics and software. I read the logs, map the risk to a control, and ship the fix — not just the finding.",
+    "Cert-backed and hands-on with risk and access-control work across logistics and software — Postgres row-level security that holds even against a malicious client, and pre-clearance checks that keep international shipments compliant. I read the logs, map the risk to a control, and ship the fix — not just the finding.",
   certifications: [
     "CompTIA Security+",
     "ISC2 Certified in Cybersecurity (CC)",
@@ -182,7 +182,7 @@ const logisticsEntries: Entry[] = [
     org: "Omron Robotics & Safety Technologies",
     role: "Logistics Specialist II",
     location: "Pleasanton, CA",
-    period: "2022 – Present",
+    period: "May 2025 – Present",
     tags: ["Global Shipping", "Compliance", "SQL Dashboards", "Vendor Coordination"],
     tagline: "Standardized international shipping classifications and cut customs holds to a 99% compliance rate.",
     bullets: [
@@ -213,7 +213,7 @@ const logisticsEntries: Entry[] = [
     kind: "volunteer",
     org: "Castro Valley Soccer Club",
     role: "Director of Scheduling (Board Member)",
-    period: "2021 – Present",
+    period: "2025 – Present",
     tags: ["Scheduling", "Contingency Planning", "Process Standardization"],
     tagline: "Orchestrated conflict-free schedules for ~1,400 players across 130 teams.",
     bullets: [
@@ -229,7 +229,7 @@ export const LOGISTICS: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Logistics operator who turns warehouse chaos into auditable process.",
   heroLede:
-    "Fourteen years bridging physical operations and the systems that track them — from IBM AS/400 automation and a warehouse-wide WMS rollout to real-time compliance dashboards for a global robotics supply chain. I've been the person keeping shipments moving and the numbers honest.",
+    "From a warehouse floor in 2010 to a global robotics supply chain today — logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, real-time compliance dashboards for international shipments on the other. I've been the person keeping shipments moving and the numbers honest.",
   workHeading: "Logistics & operations work",
   workLabel: `${logisticsEntries.length} roles & projects`,
   entries: logisticsEntries,
@@ -337,7 +337,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "logistics",
     teaser: "From AS/400 terminals to a global robotics supply chain's compliance dashboards.",
     blurb:
-      "Fourteen years keeping shipments moving and the numbers honest — classification standardization, exception tracking, and scheduling at scale.",
+      "Warehouse floor to global supply chain — keeping shipments moving and the numbers honest through classification standardization, exception tracking, and scheduling at scale.",
     focus: "Global shipping · compliance · SQL dashboards",
   },
   {
