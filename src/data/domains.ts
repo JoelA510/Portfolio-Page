@@ -39,6 +39,15 @@ export type Domain = {
 
 const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate");
 
+// Each of these jobs appears in two different domains' entries (once framed
+// for that domain's focus) — a single shared constant means a date fix only
+// has to happen once instead of drifting between the two copies.
+const OMRON_PERIOD = "May 2025 – Present";
+const PILGRIM_PERIOD = "Oct 2023 – Apr 2025";
+const REDWOOD_PERIOD = "Feb 2017 – Mar 2025";
+const REDWOOD_TENURE = "Eight years";
+const REDWOOD_YEARS_RANGE = "2017 – 2025";
+
 const cybersecurityEntries: Entry[] = [
   {
     id: "cyber-ai-advocate",
@@ -66,7 +75,7 @@ const cybersecurityEntries: Entry[] = [
     org: "Omron Robotics & Safety Technologies",
     role: "Logistics Specialist II (Risk & Compliance Focus)",
     location: "Pleasanton, CA",
-    period: "May 2025 – Present",
+    period: OMRON_PERIOD,
     tags: ["Compliance", "Risk Mapping", "Audit Evidence", "SQL"],
     tagline: "Led risk/compliance workflows for global shipments across APAC, EMEA, and LATAM.",
     bullets: [
@@ -82,7 +91,7 @@ const cybersecurityEntries: Entry[] = [
     org: "Pilgrim Learning Academy",
     role: "IT System Administrator (Access Control Focus)",
     location: "Castro Valley, CA",
-    period: "Oct 2023 – Apr 2025",
+    period: PILGRIM_PERIOD,
     tags: ["Access Control", "SOPs", "Endpoint Security", "Automation"],
     tagline: "Standardized baseline access policies across a 12+ endpoint campus.",
     bullets: [
@@ -135,7 +144,7 @@ const itEntries: Entry[] = [
     org: "Pilgrim Learning Academy",
     role: "IT System Administrator",
     location: "Castro Valley, CA",
-    period: "Oct 2023 – Apr 2025",
+    period: PILGRIM_PERIOD,
     tags: ["Endpoint Management", "Python Automation", "Networking", "Windows / ChromeOS / Android"],
     tagline: "Sole IT admin for a K-8 campus running 12+ multi-platform endpoints.",
     bullets: [
@@ -153,9 +162,9 @@ export const IT: Domain = {
   heroTitle: "IT systems administrator who automates the boring parts and documents everything.",
   heroLede:
     "Hands-on endpoint and network administration across Windows, ChromeOS, and Android — most recently as the sole IT admin for a K-8 campus. I write the script that saves the next setup 40% of the time, and the SOP that makes it repeatable.",
-  certifications: ["CompTIA A+", "AWS Certified Cloud Practitioner"],
+  certifications: ["CompTIA A+"],
   workHeading: "Systems & support work",
-  workLabel: `${itEntries.length} role${itEntries.length === 1 ? "" : "s"}`,
+  workLabel: `${itEntries.length} role${itEntries.length === 1 ? "" : "s"} · ${PILGRIM_PERIOD}`,
   entries: itEntries,
   traits: [
     {
@@ -182,7 +191,7 @@ const logisticsEntries: Entry[] = [
     org: "Omron Robotics & Safety Technologies",
     role: "Logistics Specialist II",
     location: "Pleasanton, CA",
-    period: "May 2025 – Present",
+    period: OMRON_PERIOD,
     tags: ["Global Shipping", "Compliance", "SQL Dashboards", "Vendor Coordination"],
     tagline: "Standardized international shipping classifications and cut customs holds to a 99% compliance rate.",
     bullets: [
@@ -202,7 +211,7 @@ const logisticsEntries: Entry[] = [
     tags: ["WMS Integration", "IBM AS/400 CL", "Dispatch", "Warehouse Operations"],
     tagline: "Dispatch, customer service, and warehouse operations — plus the AS/400 automation and WMS rollout that modernized them.",
     bullets: [
-      "Self-taught IBM AS/400 Control Language and automated manual reporting and data entry, cutting monthly processing time by 37.5%.",
+      "Taught myself IBM AS/400 Control Language and automated manual reporting and data entry, cutting monthly processing time by 37.5%.",
       "Drove WMS adoption across the warehouse — expanding a system previously used for just 2 of ~100 storage customers into standard practice for inventory tracking.",
       "Dispatched drivers for daily pickups and resolved 200+ customer queries weekly (shipment lookups and clarifications).",
       "Ran hands-on warehouse operations: physical inventory management, spot checks, and loading tractor trailers and customer vehicles.",
@@ -231,7 +240,7 @@ export const LOGISTICS: Domain = {
   heroLede:
     "From a warehouse floor in 2010 to a global robotics supply chain today — logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, real-time compliance dashboards for international shipments on the other. I've been the person keeping shipments moving and the numbers honest.",
   workHeading: "Logistics & operations work",
-  workLabel: `${logisticsEntries.length} roles & projects`,
+  workLabel: `${logisticsEntries.length} roles`,
   entries: logisticsEntries,
   traits: [
     {
@@ -260,12 +269,12 @@ const maintenanceEntries: Entry[] = [
     org: "Redwood Chapel Community Church",
     role: "Custodian / Facilities Technician",
     location: "Castro Valley, CA",
-    period: "Feb 2017 – Mar 2025",
+    period: REDWOOD_PERIOD,
     tags: ["Electrical", "Plumbing", "Security Hardware", "Preventive Maintenance"],
     tagline: "Hands-on repairs and security systems across two multi-use campuses.",
     bullets: [
       "Executed hands-on repairs for building infrastructure — electrical fixtures (switches, outlets, 120V/240V lighting) and plumbing components.",
-      "Configured and maintained campus surveillance (Hikvision CCTV) and communication systems (Baofeng radios); coordinated vendors for hazardous-waste removal and elevator maintenance.",
+      "Configured and maintained campus surveillance (Hikvision CCTV) and communication systems (Baofeng radios), and coordinated vendors for hazardous-waste removal and elevator maintenance.",
       "Standardized daily/weekly preventive-maintenance checklists and built an inventory tracker covering both campuses, reducing reactive fixes and stockouts.",
       "Triaged work requests with clear priorities and SLAs across two campuses.",
     ],
@@ -278,9 +287,9 @@ export const MAINTENANCE: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Facilities technician who keeps buildings, security systems, and the paperwork honest.",
   heroLede:
-    "Eight years maintaining two multi-use campuses — electrical fixtures, plumbing, security hardware, and the preventive-maintenance schedules that keep a small fix from becoming an emergency work order.",
+    `${REDWOOD_TENURE} maintaining two multi-use campuses — electrical fixtures, plumbing, security hardware, and the preventive-maintenance schedules that keep a small fix from becoming an emergency work order.`,
   workHeading: "Facilities & maintenance work",
-  workLabel: `${maintenanceEntries.length} role${maintenanceEntries.length === 1 ? "" : "s"} · 2017 – 2025`,
+  workLabel: `${maintenanceEntries.length} role${maintenanceEntries.length === 1 ? "" : "s"} · ${REDWOOD_YEARS_RANGE}`,
   entries: maintenanceEntries,
   traits: [
     {
@@ -323,12 +332,12 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "software",
     teaser: "Production software built by directing AI agents through constraints defined up front.",
     blurb:
-      "Three shipped, deployed apps — architecture and test suites first, AI agents executing against them, human review before merge.",
+      `${PROJECTS.length} shipped, deployed apps — architecture and test suites first, AI agents executing against them, human review before merge.`,
     focus: "React · TypeScript · Supabase · AI-directed delivery",
   },
   {
     tabId: "it",
-    teaser: "CompTIA A+, AWS Certified Cloud Practitioner, and hands-on endpoint administration.",
+    teaser: "CompTIA A+ certified, with hands-on endpoint and network administration.",
     blurb:
       "Provisioning automation, network administration, and endpoint management across Windows, ChromeOS, and Android.",
     focus: "Endpoint management · automation · networking",
@@ -344,7 +353,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "maintenance",
     teaser: "Electrical, plumbing, and security hardware — with a preventive-maintenance mindset.",
     blurb:
-      "Eight years of hands-on facility repairs and surveillance/comms systems management across two multi-use campuses.",
+      `${REDWOOD_TENURE} of hands-on facility repairs and surveillance/comms systems management across two multi-use campuses.`,
     focus: "Electrical · plumbing · security hardware",
   },
 ];
@@ -353,7 +362,7 @@ export const HOME = {
   navLabel: "Home",
   heroStatus: "Open to full-time roles and project work",
   heroTitle:
-    "Fourteen years bridging code, infrastructure, and the physical systems that keep organizations running.",
+    "Sixteen years bridging code, infrastructure, and the physical systems that keep organizations running.",
   heroLede:
     "I've moved between warehouse floors, IT closets, security consoles, and AI-directed software delivery — always the person who turns a mess into a documented, auditable process. Pick a focus below, or read the whole story across every tab.",
   workHeading: "Explore my work",
