@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect } from "vitest";
 import App from "../src/App";
 import { PROJECTS } from "../src/data/portfolio";
-import { CYBERSECURITY, HOME, IT, LOGISTICS } from "../src/data/domains";
+import { CYBERSECURITY, HOME, IT } from "../src/data/domains";
 
 /** Both the top and bottom TabBar render a button with this name; grab the first. */
 function getTabButton(name: string) {
@@ -21,13 +21,11 @@ describe("App", () => {
   });
 
   it("cross-references every domain project link against a real PROJECTS entry", () => {
-    // domains.ts looks up "ai-advocate"/"formwaypoint" by id and degrades to
-    // no links rather than crashing if the id ever drifts from portfolio.ts —
-    // this test is what turns that silent degradation into a loud CI failure.
+    // domains.ts looks up "ai-advocate" by id and degrades to no links rather
+    // than crashing if the id ever drifts from portfolio.ts — this test is
+    // what turns that silent degradation into a loud CI failure.
     const aiAdvocateEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-ai-advocate");
-    const formWaypointEntry = LOGISTICS.entries.find((e) => e.id === "logistics-formwaypoint");
     expect(aiAdvocateEntry?.links).toBeDefined();
-    expect(formWaypointEntry?.links).toBeDefined();
   });
 
   it("switches to the Software Engineering tab and renders every project as a case-study row", async () => {
