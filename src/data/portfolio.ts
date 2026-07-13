@@ -52,7 +52,7 @@ export const PROJECTS: Project[] = [
     title: "SquadLogic",
     tagline: "Youth sports league logistics",
     description:
-      "Turns a season's worth of registration data into balanced rosters and conflict-free schedules — replacing the spreadsheet juggling that league admins usually do by hand. Built end-to-end with AI agents working under a tight repo-context contract; every roster algorithm change ships with the unit tests that prove it.",
+      "Turns a season's worth of registration data into balanced rosters and conflict-free schedules — replacing the spreadsheet juggling that league admins usually do by hand. Built end-to-end with AI agents working under a tight repo-context contract; every roster algorithm change ships with the unit tests that prove it. Backend access is scoped with Postgres row-level security.",
     tech: [
       { name: "React 19", description: "Scheduling dashboard UI" },
       { name: "Vite 6", description: "Frontend build" },
@@ -126,7 +126,7 @@ export const PROJECTS: Project[] = [
     title: "AI Advocate",
     tagline: "Plain-language California legislation tracker",
     description:
-      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools — all without signup. Privacy-by-design: no PII collected; anonymous tokens map only to Supabase session IDs. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious.",
+      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools — all without signup. Privacy-by-design: no PII collected; anonymous tokens map only to Supabase session IDs. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious. Built for the nonprofit Love Never Fails; roughly 30 accounts in use at last count.",
     tech: [
       { name: "Expo Router", description: "iOS, Android, and web from one codebase" },
       { name: "React Native Paper", description: "Accessible UI components" },

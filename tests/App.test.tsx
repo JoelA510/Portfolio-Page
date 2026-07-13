@@ -21,11 +21,13 @@ describe("App", () => {
   });
 
   it("cross-references every domain project link against a real PROJECTS entry", () => {
-    // domains.ts looks up "ai-advocate" by id and degrades to no links rather
-    // than crashing if the id ever drifts from portfolio.ts — this test is
-    // what turns that silent degradation into a loud CI failure.
+    // domains.ts looks up "ai-advocate"/"squadlogic" by id and degrades to no
+    // links rather than crashing if the id ever drifts from portfolio.ts —
+    // this test is what turns that silent degradation into a loud CI failure.
     const aiAdvocateEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-ai-advocate");
+    const squadLogicEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-squadlogic");
     expect(aiAdvocateEntry?.links).toBeDefined();
+    expect(squadLogicEntry?.links).toBeDefined();
   });
 
   it("switches to the Software Engineering tab and renders every project as a case-study row", async () => {
