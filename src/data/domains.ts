@@ -38,6 +38,7 @@ export type Domain = {
 };
 
 const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate");
+const squadLogic = PROJECTS.find((p) => p.id === "squadlogic");
 
 // Each of these jobs appears in two different domains' entries (once framed
 // for that domain's focus) — a single shared constant means a date fix only
@@ -56,16 +57,37 @@ const cybersecurityEntries: Entry[] = [
     role: "Founder & Security Architect",
     period: "2023 – Present",
     tags: ["Supabase RLS", "Edge Functions", "Least Privilege", "PII Risk Register"],
-    tagline: "Privacy-by-design civic tech app — no PII collected, policy enforced at the database layer.",
+    tagline:
+      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails — no PII collected, policy enforced at the database layer.",
     bullets: [
       "Implemented Supabase Row-Level Security policies and RLS-respecting RPCs/edge functions so the access boundary holds even against a malicious client.",
+      "Anonymous session tokens and API quotas replace PII entirely — survivors and advocates use the app with zero signup and zero identity exposure.",
       "Defined a risk register for product and data risks (PII exposure, access rules) and tied each entry to a control and a monitoring signal.",
-      "Anonymous session tokens replace PII entirely — survivors and advocates use the app with zero signup and zero identity exposure.",
+      "In production with roughly 30 accounts at last count — a small deployment, but one where a data leak would have real human consequences.",
     ],
     links: aiAdvocate
       ? [
           { label: "Source", url: aiAdvocate.githubUrl },
           { label: "Live site", url: aiAdvocate.liveUrl },
+        ]
+      : undefined,
+  },
+  {
+    id: "cyber-squadlogic",
+    kind: "project",
+    org: "SquadLogic",
+    role: "Full Stack Developer (Security Design)",
+    period: "2026",
+    tags: ["Supabase RLS", "Least Privilege", "Auth"],
+    tagline: "The same least-privilege backend discipline, applied to a second deployed app.",
+    bullets: [
+      "Enforced Postgres Row-Level Security on the Supabase backend so roster and scheduling data access is scoped at the database layer rather than trusted to the client.",
+      "Carried the access-control patterns proven in AI Advocate into a second production deployment.",
+    ],
+    links: squadLogic
+      ? [
+          { label: "Source", url: squadLogic.githubUrl },
+          { label: "Live site", url: squadLogic.liveUrl },
         ]
       : undefined,
   },
@@ -108,11 +130,11 @@ export const CYBERSECURITY: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Security-minded operator, translating risk into controls that hold.",
   heroLede:
-    "Cert-backed and hands-on with risk and access-control work across logistics and software — Postgres row-level security that holds even against a malicious client, and pre-clearance checks that keep international shipments compliant. I read the logs, map the risk to a control, and ship the fix — not just the finding.",
+    "The security work here is shipped and inspectable: Postgres row-level security enforced in two deployed apps, least-privilege APIs with zero PII collected, and export-compliance checks on international robotics shipments. I read the logs, map the risk to a control, and ship the fix — not just the finding.",
   certifications: [
     "CompTIA Security+",
     "ISC2 Certified in Cybersecurity (CC)",
-    "Cybersecurity Pre-Apprenticeship — ITBiz Tech Academy",
+    "Cybersecurity Pre-Apprenticeship (Salutatorian) — ITBiz Tech Academy",
   ],
   workHeading: "Security & risk work",
   workLabel: `${cybersecurityEntries.length} roles & projects`,
@@ -325,7 +347,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "cybersecurity",
     teaser: "Security+, ISC2 CC, and access control that holds under a hostile client.",
     blurb:
-      "Row-level security, risk registers, and pre-clearance compliance checks — translating risk into controls that survive an audit.",
+      "Row-level security shipped in two deployed apps, risk registers, and pre-clearance compliance checks — controls that survive an audit.",
     focus: "Access control · risk mapping · RLS",
   },
   {
@@ -362,7 +384,7 @@ export const HOME = {
   navLabel: "Home",
   heroStatus: "Open to full-time roles and project work",
   heroTitle:
-    "Sixteen years bridging code, infrastructure, and the physical systems that keep organizations running.",
+    "Fifteen years keeping operations moving — warehouses, buildings, and the systems that track them.",
   heroLede:
     "I've moved between warehouse floors, IT closets, security consoles, and AI-directed software delivery — always the person who turns a mess into a documented, auditable process. Pick a focus below, or read the whole story across every tab.",
   workHeading: "Explore my work",
