@@ -26,6 +26,8 @@ describe("App", () => {
     // this test is what turns that silent degradation into a loud CI failure.
     const aiAdvocateEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-ai-advocate");
     const squadLogicEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-squadlogic");
+    expect(aiAdvocateEntry).toBeDefined();
+    expect(squadLogicEntry).toBeDefined();
     expect(aiAdvocateEntry?.links).toBeDefined();
     expect(squadLogicEntry?.links).toBeDefined();
   });
