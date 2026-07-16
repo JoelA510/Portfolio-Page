@@ -102,7 +102,7 @@ const cybersecurityEntries: Entry[] = [
     tagline: "Export-compliance and risk workflows for global robotics shipments across APAC, EMEA, and LATAM.",
     bullets: [
       "Maintain and validate HTSUS, Schedule B, and ECCN export classifications, keeping audit-ready records behind every declaration.",
-      "Leading remediation of an outdated JDE item database to current HTSUS codes, including Section 232 provisions — 689 items physically inspected, weighed, and reclassified to date.",
+      "Lead remediation of an outdated JDE item database to current HTSUS codes, including Section 232 provisions — 689 items physically inspected, weighed, and reclassified to date.",
       "Maintain change logs and lookup tools (SQL and spreadsheets) across ~140,000 part numbers, so erroneous item-file edits are caught and reverted before they become customs holds.",
       "Mapped operational risks to SOPs and audit-ready evidence packets for global logistics.",
     ],
