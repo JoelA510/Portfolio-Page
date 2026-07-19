@@ -44,7 +44,7 @@ const squadLogic = PROJECTS.find((p) => p.id === "squadlogic");
 // for that domain's focus) — a single shared constant means a date fix only
 // has to happen once instead of drifting between the two copies.
 const OMRON_PERIOD = "May 2025 – Present";
-const PILGRIM_PERIOD = "Oct 2023 – Apr 2025";
+const XGSI_PERIOD = "Aug 2010 – May 2017";
 const REDWOOD_PERIOD = "Feb 2017 – Mar 2025";
 const REDWOOD_TENURE = "Eight years";
 const REDWOOD_YEARS_RANGE = "2017 – 2025";
@@ -98,28 +98,13 @@ const cybersecurityEntries: Entry[] = [
     role: "Logistics Specialist II (Risk & Compliance Focus)",
     location: "Pleasanton, CA",
     period: OMRON_PERIOD,
-    tags: ["Compliance", "Risk Mapping", "Audit Evidence", "SQL"],
-    tagline: "Led risk/compliance workflows for global shipments across APAC, EMEA, and LATAM.",
+    tags: ["Export Compliance", "HTSUS / ECCN", "Audit Evidence", "SQL"],
+    tagline: "Export-compliance and risk workflows for global robotics shipments across APAC, EMEA, and LATAM.",
     bullets: [
-      "Standardized shipping classifications and pre-clearance logic checks, cutting customs holds and reaching 99% compliance across regions.",
-      "Mapped operational risks to SOPs and built audit-ready evidence packets, reducing reactive fixes and rework.",
-      "Built real-time KRI/KPI dashboards in SQL to track defect rates and drive corrective action in weekly operations reviews.",
-      "Partnered with vendors to triage incidents, document root cause, and track remediation to closure.",
-    ],
-  },
-  {
-    id: "cyber-pilgrim",
-    kind: "job",
-    org: "Pilgrim Learning Academy",
-    role: "IT System Administrator (Access Control Focus)",
-    location: "Castro Valley, CA",
-    period: PILGRIM_PERIOD,
-    tags: ["Access Control", "SOPs", "Endpoint Security", "Automation"],
-    tagline: "Standardized baseline access policies across a 12+ endpoint campus.",
-    bullets: [
-      "Engineered standardized naming conventions and baseline access controls (SOPs) for hardware lifecycle management.",
-      "Documented joiner/mover/leaver procedures to cut access-related tickets and keep provisioning auditable.",
-      "Automated device provisioning and recurring reporting in Python, improving audit readiness.",
+      "Maintain and validate HTSUS, Schedule B, and ECCN export classifications, keeping audit-ready records behind every declaration.",
+      "Lead remediation of an outdated JDE item database to current HTSUS codes, including Section 232 provisions — 689 items physically inspected, weighed, and reclassified to date.",
+      "Maintain change logs and lookup tools (SQL and spreadsheets) across ~140,000 part numbers, so erroneous item-file edits are caught and reverted before they become customs holds.",
+      "Mapped operational risks to SOPs and audit-ready evidence packets for global logistics.",
     ],
   },
 ];
@@ -161,18 +146,45 @@ export const CYBERSECURITY: Domain = {
 
 const itEntries: Entry[] = [
   {
-    id: "it-pilgrim",
+    id: "it-omron",
     kind: "job",
-    org: "Pilgrim Learning Academy",
-    role: "IT System Administrator",
-    location: "Castro Valley, CA",
-    period: PILGRIM_PERIOD,
-    tags: ["Endpoint Management", "Python Automation", "Networking", "Windows / ChromeOS / Android"],
-    tagline: "Sole IT admin for a K-8 campus running 12+ multi-platform endpoints.",
+    org: "Omron Robotics & Safety Technologies",
+    role: "Logistics Specialist II (Systems & Triage Focus)",
+    location: "Pleasanton, CA",
+    period: OMRON_PERIOD,
+    tags: ["JD Edwards ERP", "SQL", "Data Integrity", "Troubleshooting"],
+    tagline: "Keeps a ~140,000-part JDE ERP item database honest while daily operations run on it.",
     bullets: [
-      "Developed Python-based provisioning scripts for 12+ endpoints (Windows, Android, ChromeOS), cutting administrative setup time by 40%.",
-      "Configured and secured campus-wide network devices and printing infrastructure, maintaining high availability for educational operations.",
-      "Diagnosed network issues end-to-end to minimize downtime, and standardized asset naming and SOPs for hardware lifecycle management.",
+      "Resolve daily JD Edwards ERP discrepancies where physical inventory and digital records diverge, keeping shipping, receiving, and audit workflows moving without escalation.",
+      "Maintain change logs and lookup tools (SQL and spreadsheets) that catch erroneous item-file edits before they propagate into customs holds.",
+    ],
+  },
+  {
+    id: "it-xgsi",
+    kind: "job",
+    org: "Xpress Global Systems (XGSI)",
+    role: "Operations Specialist (Systems & Automation Focus)",
+    location: "Hayward, CA",
+    period: XGSI_PERIOD,
+    tags: ["IBM AS/400 CL", "WMS Rollout", "Automation", "Staff Training"],
+    tagline: "Self-taught AS/400 automation and a warehouse-wide WMS rollout, from inside an ops role.",
+    bullets: [
+      "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry — a two-person, 16-person-hour manual process became a single 5-hour review.",
+      "Wrote scan-log/WMS sync code that corporate IT deployed, performed the full-facility inventory intake behind the rollout, and trained the office staff on the new system.",
+    ],
+  },
+  {
+    id: "it-redwood",
+    kind: "job",
+    org: "Redwood Chapel Community Church",
+    role: "Custodian / Facilities Technician (Systems Focus)",
+    location: "Castro Valley, CA",
+    period: REDWOOD_PERIOD,
+    tags: ["Hikvision CCTV", "Baofeng Radios", "Physical Security"],
+    tagline: "Ran the surveillance and communications systems across two multi-use campuses.",
+    bullets: [
+      "Configured and maintained campus surveillance (Hikvision) and communication systems (Baofeng) across two multi-use campuses.",
+      "Standardized detailed maintenance checklists and built inventory trackers, ensuring operational readiness at both campuses.",
     ],
   },
 ];
@@ -181,12 +193,12 @@ export const IT: Domain = {
   id: "it",
   navLabel: "IT",
   heroStatus: "Open to full-time roles and project work",
-  heroTitle: "IT systems administrator who automates the boring parts and documents everything.",
+  heroTitle: "Systems-minded operator who automates the boring parts and documents everything.",
   heroLede:
-    "Hands-on endpoint and network administration across Windows, ChromeOS, and Android — most recently as the sole IT admin for a K-8 campus. I write the script that saves the next setup 40% of the time, and the SOP that makes it repeatable.",
-  certifications: ["CompTIA A+"],
+    "My systems work was earned inside operations roles, not a help desk: self-taught AS/400 automation, a warehouse-wide WMS rollout, daily JDE ERP triage, and campus surveillance systems — backed by CompTIA A+, Security+, and a year of hands-on ITBiz cybersecurity labs. I write the script that kills the manual step, and the SOP that makes it repeatable.",
+  certifications: ["CompTIA A+", "CompTIA Security+", "AWS Certified Cloud Practitioner"],
   workHeading: "Systems & support work",
-  workLabel: `${itEntries.length} role${itEntries.length === 1 ? "" : "s"} · ${PILGRIM_PERIOD}`,
+  workLabel: `${itEntries.length} roles`,
   entries: itEntries,
   traits: [
     {
@@ -200,10 +212,10 @@ export const IT: Domain = {
     {
       title: "Plan for the next person",
       description:
-        "Naming conventions, access baselines, and asset trackers exist so whoever inherits the system isn't guessing.",
+        "Naming conventions, checklists, and asset trackers exist so whoever inherits the system isn't guessing.",
     },
   ],
-  contactHeadline: "Need an IT admin who automates the busywork and documents the rest?",
+  contactHeadline: "Need someone who troubleshoots systems end-to-end and documents the fix?",
 };
 
 const logisticsEntries: Entry[] = [
@@ -214,13 +226,13 @@ const logisticsEntries: Entry[] = [
     role: "Logistics Specialist II",
     location: "Pleasanton, CA",
     period: OMRON_PERIOD,
-    tags: ["Global Shipping", "Compliance", "SQL Dashboards", "Vendor Coordination"],
-    tagline: "Standardized international shipping classifications and cut customs holds to a 99% compliance rate.",
+    tags: ["Global Shipping", "HTSUS / Schedule B", "JD Edwards ERP", "Change Control"],
+    tagline: "Remediating a ~140,000-part JDE item database to current HTS codes while keeping daily global shipments moving.",
     bullets: [
-      "Standardized shipping classifications across APAC/EMEA/LATAM and built pre-clearance logic checks that reduced customs holds.",
-      "Built real-time KRI/KPI dashboards in SQL to track defect rates and drive corrective action in weekly operations reviews.",
-      "Partnered with engineering and vendors to triage shipping exceptions and track root-cause remediation to closure.",
-      "Manages the exception tracker end-to-end for the AMR fleet's global shipments.",
+      "Physically inspected, weighed, and reclassified 689 items to current HTSUS codes — including Section 232 provisions — with batch corrections across the remainder; export holds are rare and typically resolved within hours.",
+      "Flagged a Schedule B definition change affecting the top-shipped product line (safety scanners) on import of the updated aesexp.csv — every affected item was compliant before that morning's commercial invoices.",
+      "Resolve daily JD Edwards ERP discrepancies where physical inventory and digital records diverge, keeping shipping, receiving, and audit workflows moving without escalation.",
+      "Package and process outbound international shipments across FedEx, UPS, DHL, Nippon Express, and CEVA.",
     ],
   },
   {
@@ -229,11 +241,11 @@ const logisticsEntries: Entry[] = [
     org: "Xpress Global Systems (XGSI)",
     role: "Operations Specialist",
     location: "Hayward, CA",
-    period: "Aug 2010 – May 2017",
+    period: XGSI_PERIOD,
     tags: ["WMS Integration", "IBM AS/400 CL", "Dispatch", "Warehouse Operations"],
     tagline: "Dispatch, customer service, and warehouse operations — plus the AS/400 automation and WMS rollout that modernized them.",
     bullets: [
-      "Taught myself IBM AS/400 Control Language and automated manual reporting and data entry, cutting monthly processing time by 37.5%.",
+      "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry — a two-person, 16-person-hour manual process became a single 5-hour review.",
       "Drove WMS adoption across the warehouse — expanding a system previously used for just 2 of ~100 storage customers into standard practice for inventory tracking.",
       "Dispatched drivers for daily pickups and resolved 200+ customer queries weekly (shipment lookups and clarifications).",
       "Ran hands-on warehouse operations: physical inventory management, spot checks, and loading tractor trailers and customer vehicles.",
@@ -243,13 +255,13 @@ const logisticsEntries: Entry[] = [
     id: "logistics-cvsc",
     kind: "volunteer",
     org: "Castro Valley Soccer Club",
-    role: "Director of Scheduling (Board Member)",
-    period: "2025 – Present",
+    role: "Recreational Program Director, Scheduling (Board Member)",
+    period: "Jan 2025 – Present",
     tags: ["Scheduling", "Contingency Planning", "Process Standardization"],
-    tagline: "Orchestrated conflict-free schedules for ~1,400 players across 130 teams.",
+    tagline: "Conflict-free season schedules for ~144 teams and ~1,400 players within tight field windows.",
     bullets: [
-      "Built conflict-free schedules with contingency plans for field closures and weather.",
-      "Standardized intake and change-control processes, and ran season retrospectives.",
+      "Build conflict-free season schedules with contingency plans for field closures and weather.",
+      "Every season started on time, with zero field double-bookings and zero conflicts for sole coaches of multiple teams.",
     ],
   },
 ];
@@ -260,7 +272,7 @@ export const LOGISTICS: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Logistics operator who turns warehouse chaos into auditable process.",
   heroLede:
-    "From a warehouse floor in 2010 to a global robotics supply chain today — logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, real-time compliance dashboards for international shipments on the other. I've been the person keeping shipments moving and the numbers honest.",
+    "From a warehouse floor in 2010 to a global robotics supply chain today — logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, HTSUS classification and change control for international shipments on the other. I've been the person keeping shipments moving and the numbers honest.",
   workHeading: "Logistics & operations work",
   workLabel: `${logisticsEntries.length} roles`,
   entries: logisticsEntries,
@@ -268,17 +280,17 @@ export const LOGISTICS: Domain = {
     {
       title: "Compliance is a process, not a scramble",
       description:
-        "Pre-clearance checks and standardized classifications happen before the shipment moves, not after it's held.",
+        "Classifications get validated and logged before the shipment moves, not after it's held at the border.",
     },
     {
-      title: "Metrics drive the fix",
+      title: "Change control over tribal memory",
       description:
-        "Every KRI/KPI dashboard exists to change a decision in the next ops review, not to look good in a slide.",
+        "Every corrected weight and HTS code lands in a running log with lookup tools, so a bad edit gets caught and reverted instead of rediscovered at customs.",
     },
     {
       title: "The warehouse doesn't stop for me",
       description:
-        "Whether it's an AS/400 workflow or an AMR shipment, the job is keeping it moving — I triage, fix, and follow through.",
+        "Whether it's an AS/400 workflow or a robotics shipment, the job is keeping it moving — I triage, fix, and follow through.",
     },
   ],
   contactHeadline: "Need someone who turns messy shipping data into a clean, auditable process?",
@@ -347,7 +359,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "cybersecurity",
     teaser: "Security+, ISC2 CC, and access control that holds under a hostile client.",
     blurb:
-      "Row-level security shipped in two deployed apps, risk registers, and pre-clearance compliance checks — controls that survive an audit.",
+      "Row-level security shipped in two deployed apps, risk registers, and export-classification compliance on global robotics shipments — controls that survive an audit.",
     focus: "Access control · risk mapping · RLS",
   },
   {
@@ -359,17 +371,17 @@ export const HUB_CARDS: HubCard[] = [
   },
   {
     tabId: "it",
-    teaser: "CompTIA A+ certified, with hands-on endpoint and network administration.",
+    teaser: "CompTIA A+ and Security+ certified, with systems work earned inside operations roles.",
     blurb:
-      "Provisioning automation, network administration, and endpoint management across Windows, ChromeOS, and Android.",
-    focus: "Endpoint management · automation · networking",
+      "Self-taught AS/400 automation, a warehouse-wide WMS rollout, daily JDE ERP triage, and campus surveillance systems.",
+    focus: "Systems troubleshooting · automation · SOPs",
   },
   {
     tabId: "logistics",
-    teaser: "From AS/400 terminals to a global robotics supply chain's compliance dashboards.",
+    teaser: "From AS/400 terminals to HTSUS classification for a global robotics supply chain.",
     blurb:
-      "Warehouse floor to global supply chain — keeping shipments moving and the numbers honest through classification standardization, exception tracking, and scheduling at scale.",
-    focus: "Global shipping · compliance · SQL dashboards",
+      "Warehouse floor to global supply chain — keeping shipments moving and the numbers honest through HTS classification, change control, and scheduling at scale.",
+    focus: "Global shipping · trade compliance · SQL",
   },
   {
     tabId: "maintenance",
@@ -386,7 +398,7 @@ export const HOME = {
   heroTitle:
     "Fifteen years keeping operations moving — warehouses, buildings, and the systems that track them.",
   heroLede:
-    "I've moved between warehouse floors, IT closets, security consoles, and AI-directed software delivery — always the person who turns a mess into a documented, auditable process. Pick a focus below, or read the whole story across every tab.",
+    "I've moved between warehouse floors, ERP terminals, security consoles, and AI-directed software delivery — always the person who turns a mess into a documented, auditable process. Pick a focus below, or read the whole story across every tab.",
   workHeading: "Explore my work",
   workLabel: `${HUB_CARDS.length} focus area${HUB_CARDS.length === 1 ? "" : "s"}`,
   traits: [
