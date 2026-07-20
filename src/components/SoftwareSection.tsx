@@ -22,7 +22,9 @@ export function SoftwareSection() {
         <section className="section wrap" id="work" aria-labelledby="work-h" tabIndex={-1}>
           <div className="section-head">
             <h2 id="work-h">Selected work</h2>
-            <span className="label">{PROJECTS.length} projects · all deployed</span>
+            <span className="label">
+              {PROJECTS.length} projects · {PROJECTS.filter((p) => p.liveUrl).length} deployed
+            </span>
           </div>
           {PROJECTS.map((project, i) => (
             <ProjectRow key={project.id} project={project} index={i} />

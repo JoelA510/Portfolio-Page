@@ -16,9 +16,11 @@ export type Project = {
   remediation: string;
   /** ASCII architecture diagram, rendered in a <pre>. */
   architecture: string;
-  previewUrl: string;
+  /** Absent when the project has no public deployment to embed. */
+  previewUrl?: string;
   githubUrl: string;
-  liveUrl: string;
+  /** Absent when the project has no public deployment to link. */
+  liveUrl?: string;
 };
 
 export const PORTFOLIO = {
@@ -155,5 +157,37 @@ export const PROJECTS: Project[] = [
     previewUrl: "https://www.ai-advocate.org/",
     githubUrl: "https://github.com/JoelA510/AIAdvocate",
     liveUrl: "https://www.ai-advocate.org/",
+  },
+  {
+    id: "helmets-clash",
+    title: "Helmets Clash",
+    tagline: "Turn-based hex-strategy game in the browser",
+    description:
+      "A fantasy strategy prototype that runs entirely in the browser: 2–4 seats (human or AI), four asymmetric factions, procedurally generated hex maps with deterministic seeds, cities, cards, autosave, and full replay support. The typed game core is decoupled from the React view layer, and every rules change lands through a living spec, ADRs, and a development log that AI agents read before touching code.",
+    tech: [
+      { name: "React 19", description: "View layer over the game core" },
+      { name: "TypeScript", description: "Typed domain logic end-to-end" },
+      { name: "Vite", description: "Build + dev server" },
+      { name: "Tailwind CSS", description: "UI styling" },
+    ],
+    aiStack: [
+      { name: "OpenAI Codex", description: "Task-packet driven implementation" },
+      { name: "dev-documentation/", description: "Living spec, roadmap, ADRs, and test plan agents read first" },
+      { name: "Vitest + Playwright", description: "Unit/integration + E2E gates on every change" },
+      { name: "axe-core", description: "Accessibility checks in the loop" },
+    ],
+    remediation:
+      "Agents work from task packets against a living spec → every change ships with updated Vitest/Playwright coverage and a development-log entry → axe checks the UI → I review before merge.",
+    architecture: `[SETUP FLOW] (seats · factions · map · seed)
+                        |
+                        v
+                [TYPED GAME CORE]
+        (hex map gen · turn engine · combat
+          cities · cards · resources)
+                |               |
+                v               v
+        [REACT 19 UI]   [AUTOSAVE + REPLAY]
+        (a11y-checked)    (localStorage)`,
+    githubUrl: "https://github.com/JoelA510/helmets-clash-web",
   },
 ];
