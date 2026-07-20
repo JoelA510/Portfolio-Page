@@ -78,32 +78,36 @@ export function ProjectRow({ project, index }: Props) {
           <strong>Process:</strong> {project.remediation}
         </p>
         <div className="p-actions">
-          <a href={project.liveUrl} target="_blank" rel="noreferrer">
-            Live site ↗
-          </a>
+          {project.liveUrl && (
+            <a href={project.liveUrl} target="_blank" rel="noreferrer">
+              Live site ↗
+            </a>
+          )}
           <a href={project.githubUrl} target="_blank" rel="noreferrer">
             Source ↗
           </a>
-          <button
-            type="button"
-            className="p-toggle"
-            aria-expanded={previewOpen}
-            aria-controls={`pv-${project.id}`}
-            onClick={() => {
-              const opening = !previewOpen;
-              // Re-opening after a stalled load is a natural "try again":
-              // give it a fresh watchdog window instead of showing the
-              // same stale error forever.
-              if (opening && frameTimedOut) {
-                setFrameTimedOut(false);
-                setRetryKey((k) => k + 1);
-              }
-              setPreviewOpen(opening);
-              setPreviewRequested(true);
-            }}
-          >
-            {previewOpen ? "Hide preview" : "View preview"}
-          </button>
+          {project.previewUrl && (
+            <button
+              type="button"
+              className="p-toggle"
+              aria-expanded={previewOpen}
+              aria-controls={`pv-${project.id}`}
+              onClick={() => {
+                const opening = !previewOpen;
+                // Re-opening after a stalled load is a natural "try again":
+                // give it a fresh watchdog window instead of showing the
+                // same stale error forever.
+                if (opening && frameTimedOut) {
+                  setFrameTimedOut(false);
+                  setRetryKey((k) => k + 1);
+                }
+                setPreviewOpen(opening);
+                setPreviewRequested(true);
+              }}
+            >
+              {previewOpen ? "Hide preview" : "View preview"}
+            </button>
+          )}
           <button
             type="button"
             className="p-toggle"
@@ -114,6 +118,7 @@ export function ProjectRow({ project, index }: Props) {
             Architecture
           </button>
         </div>
+        {project.previewUrl && (
         <div className="p-panel" id={`pv-${project.id}`} hidden={!previewOpen}>
           <div className={`p-frame${frameLoaded ? " is-loaded" : ""}`}>
             {!frameLoaded && !frameTimedOut && (
@@ -128,9 +133,11 @@ export function ProjectRow({ project, index }: Props) {
                   This preview is taking longer than expected to load — the host
                   may be blocking framing, or the app is cold-starting.
                 </p>
-                <a href={project.liveUrl} target="_blank" rel="noreferrer">
-                  Open live site ↗
-                </a>
+                {project.liveUrl && (
+                  <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                    Open live site ↗
+                  </a>
+                )}
               </div>
             )}
             {previewRequested && (
@@ -177,6 +184,7 @@ export function ProjectRow({ project, index }: Props) {
             Live site link above.
           </p>
         </div>
+        )}
         <div className="p-panel" id={`ar-${project.id}`} hidden={!archOpen}>
           <pre className="p-arch">{project.architecture}</pre>
         </div>

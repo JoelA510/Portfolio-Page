@@ -68,7 +68,7 @@ const cybersecurityEntries: Entry[] = [
     links: aiAdvocate
       ? [
           { label: "Source", url: aiAdvocate.githubUrl },
-          { label: "Live site", url: aiAdvocate.liveUrl },
+          ...(aiAdvocate.liveUrl ? [{ label: "Live site", url: aiAdvocate.liveUrl }] : []),
         ]
       : undefined,
   },
@@ -87,7 +87,7 @@ const cybersecurityEntries: Entry[] = [
     links: squadLogic
       ? [
           { label: "Source", url: squadLogic.githubUrl },
-          { label: "Live site", url: squadLogic.liveUrl },
+          ...(squadLogic.liveUrl ? [{ label: "Live site", url: squadLogic.liveUrl }] : []),
         ]
       : undefined,
   },
@@ -367,7 +367,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "software",
     teaser: "Production software built by directing AI agents through constraints defined up front.",
     blurb:
-      `${PROJECTS.length} shipped, deployed apps — architecture and test suites first, AI agents executing against them, human review before merge.`,
+      `${PROJECTS.length} apps — deployed production tools and a playable strategy-game prototype — architecture and test suites first, AI agents executing against them, human review before merge.`,
     focus: "React · TypeScript · Supabase · AI-directed delivery",
   },
   {
