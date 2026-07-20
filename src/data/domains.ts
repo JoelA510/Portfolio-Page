@@ -166,9 +166,10 @@ const itEntries: Entry[] = [
     role: "Operations Specialist (Systems & Automation Focus)",
     location: "Hayward, CA",
     period: XGSI_PERIOD,
-    tags: ["IBM AS/400 CL", "WMS Rollout", "Automation", "Staff Training"],
-    tagline: "Self-taught AS/400 automation and a warehouse-wide WMS rollout, from inside an ops role.",
+    tags: ["IBM AS/400 CL", "WMS Rollout", "First-Line Support", "Automation"],
+    tagline: "Self-taught AS/400 automation, a warehouse-wide WMS rollout, and first-line support — from inside an ops role.",
     bullets: [
+      "Acted as the office's informal first line of support — Windows desktops, AS/400 software (recording and distributing macros across the office; troubleshooting after system outages), label and office printers, and scanners.",
       "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry — a two-person, 16-person-hour manual process became a single 5-hour review.",
       "Wrote scan-log/WMS sync code that corporate IT deployed, performed the full-facility inventory intake behind the rollout, and trained the office staff on the new system.",
     ],
@@ -373,8 +374,8 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "it",
     teaser: "CompTIA A+ and Security+ certified, with systems work earned inside operations roles.",
     blurb:
-      "Self-taught AS/400 automation, a warehouse-wide WMS rollout, daily JDE ERP triage, and campus surveillance systems.",
-    focus: "Systems troubleshooting · automation · SOPs",
+      "First-line desktop and printer support, self-taught AS/400 automation, a warehouse-wide WMS rollout, daily JDE ERP triage, and campus surveillance systems.",
+    focus: "Systems troubleshooting · first-line support · automation",
   },
   {
     tabId: "logistics",
