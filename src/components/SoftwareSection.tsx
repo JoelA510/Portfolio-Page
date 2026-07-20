@@ -15,7 +15,7 @@ export function SoftwareSection() {
       <HeroHeader
         status="Open to full-time roles and project work"
         title="Software engineer, working with AI as a disciplined collaborator."
-        lede="I build production software by directing AI agents through constraints I define up front — architecture, schemas, and test suites. The agents move quickly; the judgment and the accountability are mine."
+        lede="I build production software by directing AI agents through constraints I define up front: architecture, schemas, and test suites. The agents move quickly; the judgment and the accountability are mine."
       />
 
       <main>
