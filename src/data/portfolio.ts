@@ -43,7 +43,7 @@ export const PORTFOLIO = {
     {
       title: "Verified before shipped",
       description:
-        "BDD frameworks and end-to-end Playwright suites catch AI mistakes early — and every change still ends with a human review.",
+        "BDD frameworks and end-to-end Playwright suites catch AI mistakes early, and every change still ends with a human review.",
     },
   ] satisfies Trait[],
 };
@@ -54,7 +54,7 @@ export const PROJECTS: Project[] = [
     title: "SquadLogic",
     tagline: "Youth sports league logistics",
     description:
-      "Turns a season's worth of registration data into balanced rosters and conflict-free schedules — replacing the spreadsheet juggling that league admins usually do by hand. Built end-to-end with AI agents working under a tight repo-context contract; every roster algorithm change ships with the unit tests that prove it. Backend access is scoped with Postgres row-level security.",
+      "Turns a season's worth of registration data into balanced rosters and conflict-free schedules, replacing the spreadsheet juggling that league admins usually do by hand. Built end-to-end with AI agents working under a tight repo-context contract; every roster algorithm change ships with the unit tests that prove it. Backend access is scoped with Postgres row-level security.",
     tech: [
       { name: "React 19", description: "Scheduling dashboard UI" },
       { name: "Vite 6", description: "Frontend build" },
@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     title: "PlanterPlan",
     tagline: "Multi-phase workflow tool for church planters",
     description:
-      "Walks church planters through the full multi-phase workflow of launching a new congregation — discernment, core team, public launch — with Gantt views, drag-to-reorder tasks, and progress tracking. The whole codebase is intentionally machine-readable: a `repo-context.yaml` map plus per-agent context files (CLAUDE.md, .gemini/) let an agent join cold and ship correctly.",
+      "Walks church planters through the full multi-phase workflow of launching a new congregation (discernment, core team, public launch) with Gantt views, drag-to-reorder tasks, and progress tracking. The whole codebase is intentionally machine-readable: a `repo-context.yaml` map plus per-agent context files (CLAUDE.md, .gemini/) let an agent join cold and ship correctly.",
     tech: [
       { name: "React 19", description: "App shell + routing" },
       { name: "TypeScript", description: "Strict mode end-to-end" },
@@ -128,7 +128,7 @@ export const PROJECTS: Project[] = [
     title: "AI Advocate",
     tagline: "Plain-language California legislation tracker",
     description:
-      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools — all without signup. Privacy-by-design: no PII collected; anonymous tokens map only to Supabase session IDs. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious. Built for the nonprofit Love Never Fails; roughly 30 accounts in use at last count.",
+      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools, all without signup. Privacy-by-design: no PII collected; anonymous tokens map only to Supabase session IDs. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious. Built for the nonprofit Love Never Fails; roughly 30 accounts in use at last count.",
     tech: [
       { name: "Expo Router", description: "iOS, Android, and web from one codebase" },
       { name: "React Native Paper", description: "Accessible UI components" },

@@ -130,7 +130,7 @@ export function ProjectRow({ project, index }: Props) {
             {frameTimedOut && !frameLoaded && (
               <div className="p-frame-err">
                 <p>
-                  This preview is taking longer than expected to load — the host
+                  This preview is taking longer than expected to load; the host
                   may be blocking framing, or the app is cold-starting.
                 </p>
                 {project.liveUrl && (
