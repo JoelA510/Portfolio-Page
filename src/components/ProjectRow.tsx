@@ -83,9 +83,11 @@ export function ProjectRow({ project, index }: Props) {
               Live site ↗
             </a>
           )}
-          <a href={project.githubUrl} target="_blank" rel="noreferrer">
-            Source ↗
-          </a>
+          {project.githubUrl && (
+            <a href={project.githubUrl} target="_blank" rel="noreferrer">
+              Source ↗
+            </a>
+          )}
           {project.previewUrl && (
             <button
               type="button"

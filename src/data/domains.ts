@@ -67,7 +67,7 @@ const cybersecurityEntries: Entry[] = [
     ],
     links: aiAdvocate
       ? [
-          { label: "Source", url: aiAdvocate.githubUrl },
+          ...(aiAdvocate.githubUrl ? [{ label: "Source", url: aiAdvocate.githubUrl }] : []),
           ...(aiAdvocate.liveUrl ? [{ label: "Live site", url: aiAdvocate.liveUrl }] : []),
         ]
       : undefined,
@@ -86,7 +86,7 @@ const cybersecurityEntries: Entry[] = [
     ],
     links: squadLogic
       ? [
-          { label: "Source", url: squadLogic.githubUrl },
+          ...(squadLogic.githubUrl ? [{ label: "Source", url: squadLogic.githubUrl }] : []),
           ...(squadLogic.liveUrl ? [{ label: "Live site", url: squadLogic.liveUrl }] : []),
         ]
       : undefined,
