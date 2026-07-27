@@ -7,6 +7,22 @@ import { PROJECTS } from "../src/data/portfolio";
 const project = PROJECTS[0];
 
 describe("ProjectRow", () => {
+  it("renders no outbound links or preview toggle for a link-free project", () => {
+    const linkless = PROJECTS.find(
+      (p) => !p.githubUrl && !p.liveUrl && !p.previewUrl,
+    );
+    // Client work with a private repo/deployment has no URLs at all; the row
+    // must still render, with Architecture as its only control.
+    expect(linkless).toBeDefined();
+    render(<ProjectRow project={linkless!} index={0} />);
+
+    expect(screen.getByRole("heading", { level: 3, name: linkless!.title })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Source/i })).toBeNull();
+    expect(screen.queryByRole("link", { name: /Live site/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /preview/i })).toBeNull();
+    expect(screen.getByRole("button", { name: "Architecture" })).toBeInTheDocument();
+  });
+
   it("keeps both panels hidden until toggled", () => {
     render(<ProjectRow project={project} index={0} />);
     expect(document.getElementById(`pv-${project.id}`)).toHaveAttribute("hidden");

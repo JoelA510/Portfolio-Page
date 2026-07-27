@@ -18,7 +18,8 @@ export type Project = {
   architecture: string;
   /** Absent when the project has no public deployment to embed. */
   previewUrl?: string;
-  githubUrl: string;
+  /** Absent when the source repository isn't public. */
+  githubUrl?: string;
   /** Absent when the project has no public deployment to link. */
   liveUrl?: string;
 };
@@ -85,11 +86,11 @@ export const PROJECTS: Project[] = [
     liveUrl: "https://squadlogic.secureyour.tech/",
   },
   {
-    id: "planterplan",
-    title: "PlanterPlan",
-    tagline: "Multi-phase workflow tool for church planters",
+    id: "launch-planner",
+    title: "Phased Launch Planner",
+    tagline: "Multi-phase workflow tool for volunteer-led org launches",
     description:
-      "Walks church planters through the full multi-phase workflow of launching a new congregation (discernment, core team, public launch) with Gantt views, drag-to-reorder tasks, and progress tracking. The whole codebase is intentionally machine-readable: a `repo-context.yaml` map plus per-agent context files (CLAUDE.md, .gemini/) let an agent join cold and ship correctly.",
+      "Walks a volunteer-led organizing team through the full multi-phase workflow of standing up a new local chapter (early planning, core team formation, public launch) with Gantt views, drag-to-reorder tasks, and progress tracking. The whole codebase is intentionally machine-readable: a `repo-context.yaml` map plus per-agent context files (CLAUDE.md, .gemini/) let an agent join cold and ship correctly.",
     tech: [
       { name: "React 19", description: "App shell + routing" },
       { name: "TypeScript", description: "Strict mode end-to-end" },
@@ -119,9 +120,8 @@ export const PROJECTS: Project[] = [
                         | (Pass)
                         v
                 [HUMAN SECURITY AUDIT]`,
-    previewUrl: "https://planterplan.secureyour.tech",
-    githubUrl: "https://github.com/JoelA510/PlanterPlan-Alpha",
-    liveUrl: "https://planterplan.secureyour.tech",
+    // Client engagement: the deployment and repository stay private, so this
+    // row is intentionally link-free (no Source, Live site, or embed).
   },
   {
     id: "ai-advocate",

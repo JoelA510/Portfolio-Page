@@ -8,7 +8,7 @@ selector at the top and bottom of the page.
 
 - **Home** — role-agnostic landing page linking into each domain
 - **Cybersecurity** — risk & access control work (Security+, ISC2 CC)
-- **Software Engineering** — AI-directed production apps (SquadLogic, AI Advocate, PlanterPlan)
+- **Software Engineering** — AI-directed production apps (SquadLogic, AI Advocate, Helmets Clash)
 - **IT** — systems administration & endpoint support (A+, AWS CCP)
 - **Logistics** — warehouse and global shipping operations
 - **Building Maintenance** — facilities, electrical, plumbing, and security hardware
@@ -17,7 +17,8 @@ selector at the top and bottom of the page.
 
 - SquadLogic
 - AIAdvocate
-- PlanterPlan
+- Phased Launch Planner (client work, private repo)
+- Helmets Clash
 
 ## Tech stack
 
