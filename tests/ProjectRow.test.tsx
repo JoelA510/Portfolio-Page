@@ -4,7 +4,10 @@ import { describe, it, expect, vi } from "vitest";
 import { ProjectRow } from "../src/components/ProjectRow";
 import { PROJECTS } from "../src/data/portfolio";
 
-const project = PROJECTS[0];
+// The preview/iframe behaviour only exists for a project with an embeddable
+// deployment, so select one by capability rather than by position — the order
+// of PROJECTS is an editorial choice that changes.
+const project = PROJECTS.find((p) => p.previewUrl && p.liveUrl)!;
 
 describe("ProjectRow", () => {
   it("renders no outbound links or preview toggle for a link-free project", () => {
@@ -21,6 +24,22 @@ describe("ProjectRow", () => {
     expect(screen.queryByRole("link", { name: /Live site/i })).toBeNull();
     expect(screen.queryByRole("button", { name: /preview/i })).toBeNull();
     expect(screen.getByRole("button", { name: "Architecture" })).toBeInTheDocument();
+  });
+
+  it("renders Source but no preview toggle for a project with a public repo and no deployment", () => {
+    const sourceOnly = PROJECTS.find((p) => p.githubUrl && !p.liveUrl && !p.previewUrl);
+    // An offline/desktop tool has a repository to read but nothing to embed;
+    // the preview toggle must not appear with no URL behind it.
+    expect(sourceOnly).toBeDefined();
+    render(<ProjectRow project={sourceOnly!} index={0} />);
+
+    expect(screen.getByRole("link", { name: /Source/i })).toHaveAttribute(
+      "href",
+      sourceOnly!.githubUrl,
+    );
+    expect(screen.queryByRole("link", { name: /Live site/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /preview/i })).toBeNull();
+    expect(document.querySelector("iframe")).toBeNull();
   });
 
   it("keeps both panels hidden until toggled", () => {

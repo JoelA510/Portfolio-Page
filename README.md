@@ -6,15 +6,19 @@ selector at the top and bottom of the page.
 
 ## Tabs
 
+Tabs run strongest-and-most-current first, with Building Maintenance last as the
+domain furthest from the rest of the work:
+
 - **Home** — role-agnostic landing page linking into each domain
-- **Cybersecurity** — risk & access control work (Security+, ISC2 CC)
-- **Software Engineering** — AI-directed production apps (SquadLogic, AI Advocate, Helmets Clash)
+- **Logistics** — warehouse and global shipping operations, plus FormWaypoint
+- **Software Engineering** — AI-directed apps (FormWaypoint, SquadLogic, AI Advocate, Helmets Clash)
 - **IT** — systems administration & endpoint support (A+, AWS CCP)
-- **Logistics** — warehouse and global shipping operations
+- **Cybersecurity** — risk & access control work (Security+, ISC2 CC)
 - **Building Maintenance** — facilities, electrical, plumbing, and security hardware
 
 ## Featured projects
 
+- FormWaypoint — appears on Software Engineering, Logistics, and Cybersecurity
 - SquadLogic
 - AIAdvocate
 - Phased Launch Planner (client work, private repo)
