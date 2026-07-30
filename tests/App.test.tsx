@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect } from "vitest";
 import App from "../src/App";
 import { PROJECTS } from "../src/data/portfolio";
-import { CYBERSECURITY, HOME, IT } from "../src/data/domains";
+import { CYBERSECURITY, HOME, HUB_CARDS, IT, LOGISTICS, TABS } from "../src/data/domains";
 
 /** Both the top and bottom TabBar render a button with this name; grab the first. */
 function getTabButton(name: string) {
@@ -21,15 +21,34 @@ describe("App", () => {
   });
 
   it("cross-references every domain project link against a real PROJECTS entry", () => {
-    // domains.ts looks up "ai-advocate"/"squadlogic" by id and degrades to no
-    // links rather than crashing if the id ever drifts from portfolio.ts —
-    // this test is what turns that silent degradation into a loud CI failure.
-    const aiAdvocateEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-ai-advocate");
-    const squadLogicEntry = CYBERSECURITY.entries.find((e) => e.id === "cyber-squadlogic");
-    expect(aiAdvocateEntry).toBeDefined();
-    expect(squadLogicEntry).toBeDefined();
-    expect(aiAdvocateEntry?.links).toBeDefined();
-    expect(squadLogicEntry?.links).toBeDefined();
+    // domains.ts looks up projects by id and degrades to no links rather than
+    // crashing if an id ever drifts from portfolio.ts — this test is what turns
+    // that silent degradation into a loud CI failure.
+    const borrowed = [
+      ...CYBERSECURITY.entries,
+      ...LOGISTICS.entries,
+    ].filter((e) => e.kind === "project");
+    expect(borrowed.length).toBeGreaterThan(0);
+    for (const entry of borrowed) {
+      expect(entry.links, `${entry.id} lost its PROJECTS lookup`).toBeDefined();
+      expect(entry.links?.length, `${entry.id} resolved to zero links`).toBeGreaterThan(0);
+    }
+  });
+
+  it("orders the tab bar with Building Maintenance last", () => {
+    expect(TABS.map((t) => t.id)).toEqual([
+      "home",
+      "logistics",
+      "software",
+      "it",
+      "cybersecurity",
+      "maintenance",
+    ]);
+    // The Home hub cards are the same journey by another route, so they must
+    // not disagree with the tab bar about the order.
+    expect(HUB_CARDS.map((c) => c.tabId)).toEqual(
+      TABS.map((t) => t.id).filter((id) => id !== "home"),
+    );
   });
 
   it("switches to the Software Engineering tab and renders every project as a case-study row", async () => {

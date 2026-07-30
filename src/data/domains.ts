@@ -20,7 +20,7 @@ export type Entry = {
   links?: EntryLink[];
 };
 
-export type TabId = "home" | "cybersecurity" | "software" | "it" | "logistics" | "maintenance";
+export type TabId = "home" | "logistics" | "software" | "it" | "cybersecurity" | "maintenance";
 
 export type Domain = {
   id: Exclude<TabId, "home" | "software">;
@@ -39,6 +39,16 @@ export type Domain = {
 
 const aiAdvocate = PROJECTS.find((p) => p.id === "ai-advocate");
 const squadLogic = PROJECTS.find((p) => p.id === "squadlogic");
+const formWaypoint = PROJECTS.find((p) => p.id === "formwaypoint");
+
+/** Source/Live links for a project row reused as a domain entry, in the order the row shows them. */
+function projectLinks(project: (typeof PROJECTS)[number] | undefined): EntryLink[] | undefined {
+  if (!project) return undefined;
+  return [
+    ...(project.githubUrl ? [{ label: "Source", url: project.githubUrl }] : []),
+    ...(project.liveUrl ? [{ label: "Live site", url: project.liveUrl }] : []),
+  ];
+}
 
 // Each of these jobs appears in two different domains' entries (once framed
 // for that domain's focus) — a single shared constant means a date fix only
@@ -65,12 +75,7 @@ const cybersecurityEntries: Entry[] = [
       "Defined a risk register for product and data risks (PII exposure, access rules) and tied each entry to a control and a monitoring signal.",
       "In production with roughly 30 accounts at last count: a small deployment, but one where a data leak would have real human consequences.",
     ],
-    links: aiAdvocate
-      ? [
-          ...(aiAdvocate.githubUrl ? [{ label: "Source", url: aiAdvocate.githubUrl }] : []),
-          ...(aiAdvocate.liveUrl ? [{ label: "Live site", url: aiAdvocate.liveUrl }] : []),
-        ]
-      : undefined,
+    links: projectLinks(aiAdvocate),
   },
   {
     id: "cyber-squadlogic",
@@ -84,12 +89,24 @@ const cybersecurityEntries: Entry[] = [
       "Enforced Postgres Row-Level Security on the Supabase backend so roster and scheduling data access is scoped at the database layer rather than trusted to the client.",
       "Carried the access-control patterns proven in AI Advocate into a second production deployment.",
     ],
-    links: squadLogic
-      ? [
-          ...(squadLogic.githubUrl ? [{ label: "Source", url: squadLogic.githubUrl }] : []),
-          ...(squadLogic.liveUrl ? [{ label: "Live site", url: squadLogic.liveUrl }] : []),
-        ]
-      : undefined,
+    links: projectLinks(squadLogic),
+  },
+  {
+    id: "cyber-formwaypoint",
+    kind: "project",
+    org: "FormWaypoint",
+    role: "Sole Engineer (Export Control & Data Handling)",
+    period: "2025 – Present",
+    tags: ["Export Control", "ECCN / EAR99", "Local-Only Processing", "Audit Trail"],
+    tagline:
+      "Export-documentation tooling that refuses to invent a compliance value and never puts shipment data on a network.",
+    bullets: [
+      "Removed the attack surface rather than defending it: an earlier build of this repo was a Hono API, a Prisma/Postgres database, and a Python OCR service; the shipped tool has none of them, and documents are parsed and forms filled in the browser.",
+      "Encoded export-control refusals as product rules, because an export declaration is signed under penalty: no EAR99 assigned because an invoice states no ECCN, no NLR because EAR99 was chosen, and no country of origin, hazardous-material, routed-export, or related-party status inferred.",
+      "Classification changes need a recorded override with a reason and an approver, and an override that does not fit the goods is still challenged, so a filing carries an audit trail instead of a silent correction.",
+      "Customer shipment documents are never committed: of 322 tests, the 122 that check output against real filed SLIs run only where those documents exist locally.",
+    ],
+    links: projectLinks(formWaypoint),
   },
   {
     id: "cyber-omron",
@@ -221,6 +238,24 @@ export const IT: Domain = {
 
 const logisticsEntries: Entry[] = [
   {
+    id: "logistics-formwaypoint",
+    kind: "project",
+    org: "FormWaypoint",
+    role: "Sole Engineer",
+    period: "2025 – Present",
+    tags: ["Schedule B", "SLI Preparation", "Census AES Concordance", "Item Master"],
+    tagline:
+      "Turns a commercial invoice and packing list into a completed carrier Shipper's Letter of Instruction, built from the same preparation I do by hand.",
+    bullets: [
+      "Selects the USD document set (SLI box 31 is value at the port of export in US dollars), joins invoice lines to packing-list lines by lot id and order/sequence rather than description, and groups them into commodity rows keyed on Schedule B, D/F, and the export-control triplet: the way these shipments actually get filed.",
+      "Validates every Schedule B number against the Census Bureau AES concordance (9,746 codes): ten digits, currently active, and reported in the required unit of quantity, so a piece count filed against a code AES reports in kilograms gets flagged before it reaches the carrier.",
+      "Fills the real blank Nippon Express and CEVA forms, and produces FedEx Ship Manager and UPS WorldShip keying sheets in the order those screens prompt, because import maps are configured per installation and a mismatched one transposes values silently.",
+      "Imports an ERP item master for the per-part weights one CIPL format omits, then screens every commodity number in it: one library flagged 1,456 of 2,856 rows as import HTS numbers sitting where Schedule B numbers belong. It lists them by part number for correction at source and changes nothing in place.",
+      "Verified against five real, manually processed shipments across two CIPL formats; the expected values come from the SLIs that were filed for them, so a passing suite means the tool reproduced what a person produced by hand.",
+    ],
+    links: projectLinks(formWaypoint),
+  },
+  {
     id: "logistics-omron",
     kind: "job",
     org: "Omron Robotics & Safety Technologies",
@@ -273,9 +308,9 @@ export const LOGISTICS: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Logistics operator who turns warehouse chaos into auditable process.",
   heroLede:
-    "From a warehouse floor in 2010 to a global robotics supply chain today: logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, HTSUS classification and change control for international shipments on the other. I've been the person keeping shipments moving and the numbers honest.",
+    "From a warehouse floor in 2010 to a global robotics supply chain today: logistics is where I keep coming back. IBM AS/400 automation and a warehouse-wide WMS rollout on one end, HTSUS classification and change control for international shipments on the other, and FormWaypoint in between: export documentation tooling I built because I was the one preparing those forms by hand. I've been the person keeping shipments moving and the numbers honest.",
   workHeading: "Logistics & operations work",
-  workLabel: `${logisticsEntries.length} roles`,
+  workLabel: `${logisticsEntries.length} roles & projects`,
   entries: logisticsEntries,
   traits: [
     {
@@ -346,7 +381,9 @@ export const MAINTENANCE: Domain = {
   contactHeadline: "Need someone who keeps the building running and the maintenance log honest?",
 };
 
-export const DOMAINS: Domain[] = [CYBERSECURITY, IT, LOGISTICS, MAINTENANCE];
+// Ordered the way the tab bar orders them: strongest, longest-running domain
+// first, with Building Maintenance last as the one least like the others.
+export const DOMAINS: Domain[] = [LOGISTICS, IT, CYBERSECURITY, MAINTENANCE];
 
 export type HubCard = {
   tabId: TabId;
@@ -357,17 +394,17 @@ export type HubCard = {
 
 export const HUB_CARDS: HubCard[] = [
   {
-    tabId: "cybersecurity",
-    teaser: "Security+, ISC2 CC, and access control that holds under a hostile client.",
+    tabId: "logistics",
+    teaser: "From AS/400 terminals to HTSUS classification for a global robotics supply chain.",
     blurb:
-      "Row-level security shipped in two deployed apps, risk registers, and export-classification compliance on global robotics shipments: controls that survive an audit.",
-    focus: "Access control · risk mapping · RLS",
+      "Warehouse floor to global supply chain: keeping shipments moving and the numbers honest through HTS classification, change control, and scheduling at scale, plus FormWaypoint, the export-documentation tool I built for the forms I was preparing by hand.",
+    focus: "Global shipping · trade compliance · export documentation",
   },
   {
     tabId: "software",
     teaser: "Production software built by directing AI agents through constraints defined up front.",
     blurb:
-      `${PROJECTS.length} apps (deployed production tools and a playable strategy-game prototype): architecture and test suites first, AI agents executing against them, human review before merge.`,
+      `${PROJECTS.length} apps (deployed production tools, an offline export-compliance tool, and a playable strategy-game prototype): architecture and test suites first, AI agents executing against them, human review before merge.`,
     focus: "React · TypeScript · Supabase · AI-directed delivery",
   },
   {
@@ -378,11 +415,11 @@ export const HUB_CARDS: HubCard[] = [
     focus: "Systems troubleshooting · first-line support · automation",
   },
   {
-    tabId: "logistics",
-    teaser: "From AS/400 terminals to HTSUS classification for a global robotics supply chain.",
+    tabId: "cybersecurity",
+    teaser: "Security+, ISC2 CC, and access control that holds under a hostile client.",
     blurb:
-      "Warehouse floor to global supply chain: keeping shipments moving and the numbers honest through HTS classification, change control, and scheduling at scale.",
-    focus: "Global shipping · trade compliance · SQL",
+      "Row-level security shipped in two deployed apps, a tool that refuses to infer an export-control value it cannot prove, and risk registers behind global robotics shipments: controls that survive an audit.",
+    focus: "Access control · risk mapping · RLS",
   },
   {
     tabId: "maintenance",
@@ -424,12 +461,15 @@ export const HOME = {
 
 export type TabMeta = { id: TabId; navLabel: string };
 
+// Tab order is deliberate: the domains with the deepest and most current
+// experience lead, and Building Maintenance sits last as the one furthest from
+// the rest of the work rather than the least of it.
 export const TABS: TabMeta[] = [
   { id: "home", navLabel: HOME.navLabel },
-  { id: "cybersecurity", navLabel: CYBERSECURITY.navLabel },
+  { id: "logistics", navLabel: LOGISTICS.navLabel },
   { id: "software", navLabel: "Software Engineering" },
   { id: "it", navLabel: IT.navLabel },
-  { id: "logistics", navLabel: LOGISTICS.navLabel },
+  { id: "cybersecurity", navLabel: CYBERSECURITY.navLabel },
   { id: "maintenance", navLabel: MAINTENANCE.navLabel },
 ];
 

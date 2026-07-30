@@ -51,6 +51,53 @@ export const PORTFOLIO = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "formwaypoint",
+    title: "FormWaypoint",
+    tagline: "Commercial invoice to carrier SLI, entirely on your own machine",
+    description:
+      "Turns a combined commercial invoice and packing list into a completed carrier Shipper's Letter of Instruction without the shipment ever leaving the machine: the CIPL is parsed locally, the carrier's real blank form is filled locally, and there is no backend to send anything to. Two CIPL formats and two carrier adapters (Nippon Express, CEVA) ship today; FedEx and UPS get keying sheets ordered the way Ship Manager and WorldShip prompt, because a mismatched import map fails silently. Every Schedule B number is validated against the Census Bureau AES concordance, and every quantity, weight, and value has to sum back to the totals printed on the source before a form is generated. What it refuses to do is the design: it never assigns EAR99 because no ECCN appeared, never converts an HTSUS number into a Schedule B number, and never treats a blank field as zero. 322 tests hold that line against five real shipments, with the expected values taken from the SLIs a person filed by hand; it also ships as a Windows desktop build, where a Rust shell refreshes the Census dataset a browser is not allowed to fetch.",
+    tech: [
+      { name: "React 19", description: "Review and output UI" },
+      { name: "TypeScript", description: "Strict types across the domain layer, no escape hatches" },
+      { name: "Vite 8", description: "Build + dev server" },
+      { name: "pdfjs-dist", description: "Position-aware CIPL text extraction, no OCR" },
+      { name: "pdf-lib", description: "Fills the carrier's real blank form, unsigned" },
+      { name: "IndexedDB", description: "The only store; nothing is uploaded" },
+      { name: "Tauri 2 (Rust)", description: "Windows desktop shell + Census dataset refresh" },
+    ],
+    aiStack: [
+      { name: ".agent/ rules", description: "Always-on operating, security, and architecture rules agents read first" },
+      { name: ".agent/ workflows", description: "Named procedures for features, refactors, debugging, and pre-PR review" },
+      { name: "Codex review bot", description: "Scoped review checklist posted on every pull request" },
+      { name: "Vitest", description: "322-test regression suite gating every change" },
+    ],
+    remediation:
+      "AI works against always-on rules that forbid inferring any compliance value → the suite replays five real shipments against the SLIs filed for them → a failure is read as a rule violation, not a test to relax → one check command (typecheck, lint, tests, build) is the single gate, run identically in CI and by me before merge.",
+    architecture: `[CIPL PDF] ---> [TEXT + COORDINATES]
+                        |
+                        v
+                [FORMAT REGISTRY]
+                (detect -> parser)
+                        |
+                        v
+                  [RECONCILER]
+        (USD set · line join · grouping
+          totals must sum back)
+                |               |
+                v               v
+        [SCHEDULE B]      [ITEM LIBRARY]
+        (Census AES)      (weights · codes)
+                |               |
+                +-------+-------+
+                        v
+                [CARRIER ADAPTER]
+        (Nippon · CEVA · keying sheets)
+                        |
+                        v
+              [FILLED PDF, UNSIGNED]`,
+    githubUrl: "https://github.com/JoelA510/FormWaypoint",
+  },
+  {
     id: "squadlogic",
     title: "SquadLogic",
     tagline: "Youth sports league logistics",
