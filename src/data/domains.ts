@@ -1,5 +1,5 @@
 import { PROJECTS } from "./portfolio";
-import type { Trait } from "./portfolio";
+import type { Project, Trait } from "./portfolio";
 
 export type { Trait };
 
@@ -42,7 +42,7 @@ const squadLogic = PROJECTS.find((p) => p.id === "squadlogic");
 const formWaypoint = PROJECTS.find((p) => p.id === "formwaypoint");
 
 /** Source/Live links for a project row reused as a domain entry, in the order the row shows them. */
-function projectLinks(project: (typeof PROJECTS)[number] | undefined): EntryLink[] | undefined {
+function projectLinks(project: Project | undefined): EntryLink[] | undefined {
   if (!project) return undefined;
   return [
     ...(project.githubUrl ? [{ label: "Source", url: project.githubUrl }] : []),
