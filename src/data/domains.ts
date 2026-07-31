@@ -104,7 +104,7 @@ const cybersecurityEntries: Entry[] = [
       "Removed the attack surface rather than defending it: an earlier build of this repo was a Hono API, a Prisma/Postgres database, and a Python OCR service; the shipped tool has none of them, and documents are parsed and forms filled in the browser.",
       "Encoded export-control refusals as product rules, because an export declaration is signed under penalty: no EAR99 assigned because an invoice states no ECCN, no NLR because EAR99 was chosen, and no country of origin, hazardous-material, routed-export, or related-party status inferred.",
       "Classification changes need a recorded override with a reason and an approver, and an override that does not fit the goods is still challenged, so a filing carries an audit trail instead of a silent correction.",
-      "Customer shipment documents are never committed: of 322 tests, the 122 that check output against real filed SLIs run only where those documents exist locally.",
+      "Customer shipment documents are never committed: a clean checkout runs 200 tests, while the 122 that check output against real filed SLIs run only where those documents exist locally.",
     ],
     links: projectLinks(formWaypoint),
   },
