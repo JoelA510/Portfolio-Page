@@ -64,11 +64,11 @@ const cybersecurityEntries: Entry[] = [
     id: "cyber-ai-advocate",
     kind: "project",
     org: "AI Advocate",
-    role: "Founder & Security Architect",
+    role: "Developer",
     period: "2023 – Present",
     tags: ["Supabase RLS", "Edge Functions", "Least Privilege", "PII Risk Register"],
     tagline:
-      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails: no PII collected, policy enforced at the database layer.",
+      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails (their concept, built solo through a Valyria Studios engagement): no PII collected, policy enforced at the database layer.",
     bullets: [
       "Implemented Supabase Row-Level Security policies and RLS-respecting RPCs/edge functions so the access boundary holds even against a malicious client.",
       "Anonymous session tokens and API quotas replace PII entirely; survivors and advocates use the app with zero signup and zero identity exposure.",
