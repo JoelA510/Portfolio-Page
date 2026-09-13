@@ -64,11 +64,11 @@ const cybersecurityEntries: Entry[] = [
     id: "cyber-ai-advocate",
     kind: "project",
     org: "AI Advocate",
-    role: "Founder & Security Architect",
-    period: "2023 – Present",
+    role: "Developer",
+    period: "Jun 2025 – Present",
     tags: ["Supabase RLS", "Edge Functions", "Least Privilege", "PII Risk Register"],
     tagline:
-      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails: no PII collected, policy enforced at the database layer.",
+      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails (their concept, built solo through a Valyria Studios engagement): no PII collected, policy enforced at the database layer.",
     bullets: [
       "Implemented Supabase Row-Level Security policies and RLS-respecting RPCs/edge functions so the access boundary holds even against a malicious client.",
       "Anonymous session tokens and API quotas replace PII entirely; survivors and advocates use the app with zero signup and zero identity exposure.",
@@ -81,7 +81,7 @@ const cybersecurityEntries: Entry[] = [
     id: "cyber-squadlogic",
     kind: "project",
     org: "SquadLogic",
-    role: "Full Stack Developer (Security Design)",
+    role: "Developer (Security Design)",
     period: "2026",
     tags: ["Supabase RLS", "Least Privilege", "Auth"],
     tagline: "The same least-privilege backend discipline, applied to a second deployed app.",
@@ -95,7 +95,7 @@ const cybersecurityEntries: Entry[] = [
     id: "cyber-formwaypoint",
     kind: "project",
     org: "FormWaypoint",
-    role: "Sole Engineer (Export Control & Data Handling)",
+    role: "Developer (Export Control & Data Handling)",
     period: "2025 – Present",
     tags: ["Export Control", "ECCN / EAR99", "Local-Only Processing", "Audit Trail"],
     tagline:
@@ -241,7 +241,7 @@ const logisticsEntries: Entry[] = [
     id: "logistics-formwaypoint",
     kind: "project",
     org: "FormWaypoint",
-    role: "Sole Engineer",
+    role: "Developer",
     period: "2025 – Present",
     tags: ["Schedule B", "SLI Preparation", "Census AES Concordance", "Item Master"],
     tagline:
