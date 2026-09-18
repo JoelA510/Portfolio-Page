@@ -119,7 +119,7 @@ const cybersecurityEntries: Entry[] = [
     tagline: "Export-compliance and risk workflows for global robotics shipments across APAC, EMEA, and LATAM.",
     bullets: [
       "Maintain and validate HTSUS, Schedule B, and ECCN export classifications, keeping audit-ready records behind every declaration.",
-      "Lead remediation of an outdated JDE item database to current HTSUS codes, including Section 232 provisions: 689 items physically inspected, weighed, and reclassified to date.",
+      "Lead remediation of an outdated JDE item database to current HTSUS codes, including Section 232 provisions: 984 items physically inspected, weighed, and reclassified as of September 2026.",
       "Maintain change logs and lookup tools (SQL and spreadsheets) across ~140,000 part numbers, so erroneous item-file edits are caught and reverted before they become customs holds.",
       "Mapped operational risks to SOPs and audit-ready evidence packets for global logistics.",
     ],
@@ -265,7 +265,7 @@ const logisticsEntries: Entry[] = [
     tags: ["Global Shipping", "HTSUS / Schedule B", "JD Edwards ERP", "Change Control"],
     tagline: "Remediating a ~140,000-part JDE item database to current HTS codes while keeping daily global shipments moving.",
     bullets: [
-      "Physically inspected, weighed, and reclassified 689 items to current HTSUS codes (including Section 232 provisions) with batch corrections across the remainder; export holds are rare and typically resolved within hours.",
+      "Physically inspected, weighed, and reclassified 984 items (as of September 2026) to current HTSUS codes (including Section 232 provisions) with batch corrections across the remainder; export holds are rare and typically resolved within hours.",
       "Flagged a Schedule B definition change affecting the top-shipped product line (safety scanners) on import of the updated aesexp.csv; every affected item was compliant before that morning's commercial invoices.",
       "Resolve daily JD Edwards ERP discrepancies where physical inventory and digital records diverge, keeping shipping, receiving, and audit workflows moving without escalation.",
       "Package and process outbound international shipments across FedEx, UPS, DHL, Nippon Express, and CEVA.",
