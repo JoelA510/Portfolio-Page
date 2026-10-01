@@ -268,7 +268,8 @@ const logisticsEntries: Entry[] = [
       "Physically inspected, weighed, and reclassified 984 items (as of September 2026) to current HTSUS codes (including Section 232 provisions) with batch corrections across the remainder; export holds are rare and typically resolved within hours.",
       "Flagged a Schedule B definition change affecting the top-shipped product line (safety scanners) on import of the updated aesexp.csv; every affected item was compliant before that morning's commercial invoices.",
       "Resolve daily JD Edwards ERP discrepancies where physical inventory and digital records diverge, keeping shipping, receiving, and audit workflows moving without escalation.",
-      "Package and process outbound international shipments across FedEx, UPS, DHL, Nippon Express, and CEVA.",
+      "Package and process outbound international shipments across FedEx, UPS, DHL, Nippon Express, and CEVA with air waybills, bills of lading, and commercial invoices; certified forklift operator.",
+      "Accept and log inbound deliveries and release received parts to engineers, with system receipt held by the receiving lead under J-SOX separation-of-duties controls.",
     ],
   },
   {
@@ -284,7 +285,7 @@ const logisticsEntries: Entry[] = [
       "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry; a two-person, 16-person-hour manual process became a single 5-hour review.",
       "Drove WMS adoption across the warehouse, expanding a system previously used for just 2 of ~100 storage customers into standard practice for inventory tracking.",
       "Dispatched drivers for daily pickups and resolved 200+ customer queries weekly (shipment lookups and clarifications).",
-      "Ran hands-on warehouse operations: physical inventory management, spot checks, and loading tractor trailers and customer vehicles.",
+      "Ran hands-on warehouse operations: received inbound freight (nearly all pallets and carpet, vinyl, and turf rolls), handled bills of lading, operated forklifts as a certified operator, and managed physical inventory, spot checks, and the loading of tractor trailers and customer vehicles.",
     ],
   },
   {
