@@ -187,7 +187,7 @@ const itEntries: Entry[] = [
     tagline: "Self-taught AS/400 automation, a warehouse-wide WMS rollout, and first-line support, all from inside an ops role.",
     bullets: [
       "Acted as the office's informal first line of support: Windows desktops, AS/400 software (recording and distributing macros across the office; troubleshooting after system outages), label and office printers, and scanners.",
-      "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry; a two-person, 16-person-hour manual process became a single 5-hour review.",
+      "Taught myself IBM AS/400 Control Language and automated month-end billing data entry; a two-person, 16-person-hour manual process became a single 5-hour review.",
       "Wrote scan-log/WMS sync code that corporate IT deployed, performed the full-facility inventory intake behind the rollout, and trained the office staff on the new system.",
     ],
   },
@@ -282,7 +282,7 @@ const logisticsEntries: Entry[] = [
     tags: ["WMS Integration", "IBM AS/400 CL", "Dispatch", "Warehouse Operations"],
     tagline: "Dispatch, customer service, and warehouse operations, plus the AS/400 automation and WMS rollout that modernized them.",
     bullets: [
-      "Taught myself IBM AS/400 Control Language and automated weekly reporting and data entry; a two-person, 16-person-hour manual process became a single 5-hour review.",
+      "Taught myself IBM AS/400 Control Language and automated month-end billing data entry; a two-person, 16-person-hour manual process became a single 5-hour review, and with storage-account inventory movements tracked in real time between closes, client inquiries no longer needed a physical check of parts.",
       "Drove WMS adoption across the warehouse, expanding a system previously used for just 2 of ~100 storage customers into standard practice for inventory tracking.",
       "Dispatched drivers for daily pickups and resolved 200+ customer queries weekly (shipment lookups and clarifications).",
       "Ran hands-on warehouse operations: received inbound freight (nearly all pallets and carpet, vinyl, and turf rolls), handled bills of lading, operated forklifts as a certified operator, and managed physical inventory, spot checks, and the loading of tractor trailers and customer vehicles.",
