@@ -68,10 +68,10 @@ const cybersecurityEntries: Entry[] = [
     period: "Jun 2025 – Present",
     tags: ["Supabase RLS", "Edge Functions", "Least Privilege", "PII Risk Register"],
     tagline:
-      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails (their concept, built solo through a Valyria Studios engagement): no PII collected, policy enforced at the database layer.",
+      "Privacy-by-design civic tech app built for the nonprofit Love Never Fails (their concept, built solo through a Valyria Studios engagement): no name, email, or account collected, policy enforced at the database layer.",
     bullets: [
       "Implemented Supabase Row-Level Security policies and RLS-respecting RPCs/edge functions so the access boundary holds even against a malicious client.",
-      "Anonymous session tokens and API quotas replace PII entirely; survivors and advocates use the app with zero signup and zero identity exposure.",
+      "Anonymous sessions replace accounts: survivors and advocates use the app with no signup and without giving a name or email.",
       "Defined a risk register for product and data risks (PII exposure, access rules) and tied each entry to a control and a monitoring signal.",
       "In production with roughly 30 accounts at last count: a small deployment, but one where a data leak would have real human consequences.",
     ],
@@ -132,7 +132,7 @@ export const CYBERSECURITY: Domain = {
   heroStatus: "Open to full-time roles and project work",
   heroTitle: "Security-minded operator, translating risk into controls that hold.",
   heroLede:
-    "The security work here is shipped and inspectable: Postgres row-level security enforced in two deployed apps, least-privilege APIs with zero PII collected, and export-compliance checks on international robotics shipments. I read the logs, map the risk to a control, and ship the fix, not just the finding.",
+    "The security work here is shipped and inspectable: Postgres row-level security enforced in two deployed apps, least-privilege APIs behind anonymous sessions, and export-compliance checks on international robotics shipments. I read the logs, map the risk to a control, and ship the fix, not just the finding.",
   certifications: [
     "CompTIA Security+",
     "ISC2 Certified in Cybersecurity (CC)",
