@@ -133,44 +133,6 @@ export const PROJECTS: Project[] = [
     liveUrl: "https://squadlogic.secureyour.tech/",
   },
   {
-    id: "launch-planner",
-    title: "Phased Launch Planner",
-    tagline: "Multi-phase workflow tool for volunteer-led org launches",
-    description:
-      "Walks a volunteer-led organizing team through the full multi-phase workflow of standing up a new local chapter (early planning, core team formation, public launch) with Gantt views, drag-to-reorder tasks, and progress tracking. The whole codebase is intentionally machine-readable: a `repo-context.yaml` map plus per-agent context files (CLAUDE.md, .gemini/) let an agent join cold and ship correctly.",
-    tech: [
-      { name: "React 19", description: "App shell + routing" },
-      { name: "TypeScript", description: "Strict mode end-to-end" },
-      { name: "Tailwind 4 + Radix UI", description: "Headless primitives + tokens" },
-      { name: "TanStack Query", description: "Server state + caching" },
-      { name: "react-hook-form + Zod", description: "Forms validated against Zod schemas" },
-      { name: "Supabase", description: "Postgres backend with RLS" },
-      { name: "Vercel", description: "Hosting" },
-    ],
-    aiStack: [
-      { name: "Antigravity IDE", description: "Architecture mapping + scaffolding" },
-      { name: "Claude Code", description: "Feature drafting + refactors" },
-      { name: "repo-context.yaml", description: "Machine-readable repo map agents read first" },
-      { name: "Playwright BDD", description: "Behavioral spec gate for every AI-generated feature" },
-    ],
-    remediation:
-      "AI generates a feature against the repo-context map → the Playwright BDD specs run → AI reads the failures and revises → I review the final patch.",
-    architecture: `[AI AGENTS] <---> [REPO CONTEXT (.agent/rules)]
-                        |
-                        v
-                [CODE GENERATION]
-                        |
-                        v
-                [PLAYWRIGHT BDD SUITE]
-                        | (Fail)
-                        +---> [AI REMEDIATION LOOP]
-                        | (Pass)
-                        v
-                [HUMAN SECURITY AUDIT]`,
-    // Client engagement: the deployment and repository stay private, so this
-    // row is intentionally link-free (no Source, Live site, or embed).
-  },
-  {
     id: "ai-advocate",
     title: "AI Advocate",
     tagline: "Plain-language California legislation tracker",

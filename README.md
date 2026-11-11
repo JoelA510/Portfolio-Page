@@ -21,7 +21,6 @@ domain furthest from the rest of the work:
 - FormWaypoint — appears on Software Engineering, Logistics, and Cybersecurity
 - SquadLogic
 - AIAdvocate
-- Phased Launch Planner (client work, private repo)
 - Helmets Clash
 
 ## Tech stack
