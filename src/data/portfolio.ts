@@ -175,7 +175,7 @@ export const PROJECTS: Project[] = [
     title: "AI Advocate",
     tagline: "Plain-language California legislation tracker",
     description:
-      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools, all without signup. Privacy-by-design: no PII collected; anonymous tokens map only to Supabase session IDs. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious. Built for the nonprofit Love Never Fails; roughly 30 accounts in use at last count.",
+      "Survivors, allies, and advocates tracking California legislation get AI-generated bilingual bill summaries, their representatives' voting records, and one-tap outreach tools, all without signup. Privacy-by-design: no name, email, or account collected; what the app stores is tied to an anonymous session. Every write goes through RLS-respecting RPCs or edge functions, so the policy boundary holds even if a client is malicious. Built for the nonprofit Love Never Fails; roughly 30 accounts in use at last count.",
     tech: [
       { name: "Expo Router", description: "iOS, Android, and web from one codebase" },
       { name: "React Native Paper", description: "Accessible UI components" },
