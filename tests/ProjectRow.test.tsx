@@ -11,15 +11,13 @@ const project = PROJECTS.find((p) => p.previewUrl && p.liveUrl)!;
 
 describe("ProjectRow", () => {
   it("renders no outbound links or preview toggle for a link-free project", () => {
-    const linkless = PROJECTS.find(
-      (p) => !p.githubUrl && !p.liveUrl && !p.previewUrl,
-    );
-    // Client work with a private repo/deployment has no URLs at all; the row
-    // must still render, with Architecture as its only control.
-    expect(linkless).toBeDefined();
-    render(<ProjectRow project={linkless!} index={0} />);
+    // No listed project is link-free today, but the row still has to render one
+    // (a private repo and deployment have no URLs at all), with Architecture as
+    // its only control. Build the case from a real project with its URLs removed.
+    const linkless = { ...project, githubUrl: undefined, liveUrl: undefined, previewUrl: undefined };
+    render(<ProjectRow project={linkless} index={0} />);
 
-    expect(screen.getByRole("heading", { level: 3, name: linkless!.title })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3, name: linkless.title })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Source/i })).toBeNull();
     expect(screen.queryByRole("link", { name: /Live site/i })).toBeNull();
     expect(screen.queryByRole("button", { name: /preview/i })).toBeNull();
