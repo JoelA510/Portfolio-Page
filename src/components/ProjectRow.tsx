@@ -18,7 +18,7 @@ const IFRAME_ALLOW =
 /**
  * One hairline-ruled case-study row: mono meta column (stack, AI tooling)
  * beside a short plain-English summary, with quiet text toggles for the longer
- * account, a lazy-loaded live preview, and an ASCII architecture diagram.
+ * account, a lazy-loaded live preview, and a layered architecture diagram.
  */
 export function ProjectRow({ project, index }: Props) {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -201,7 +201,18 @@ export function ProjectRow({ project, index }: Props) {
           <p className="p-detail">{project.description}</p>
         </div>
         <div className="p-panel" id={`ar-${project.id}`} hidden={!archOpen}>
-          <pre className="p-arch">{project.architecture}</pre>
+          <ol className="p-arch" aria-label={`${project.title} architecture, top to bottom`}>
+            {project.architecture.map((layer, i) => (
+              <li key={i} className="arch-layer">
+                {layer.map((node) => (
+                  <div key={node.label} className="arch-node">
+                    <span className="arch-label">{node.label}</span>
+                    {node.note && <span className="arch-note">{node.note}</span>}
+                  </div>
+                ))}
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </article>
