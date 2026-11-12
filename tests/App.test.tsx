@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect } from "vitest";
 import App from "../src/App";
-import { PROJECTS } from "../src/data/portfolio";
+import { PROCESS_RULES, PROCESS_STEPS, PROJECTS } from "../src/data/portfolio";
 import { CYBERSECURITY, HOME, HUB_CARDS, IT, LOGISTICS, TABS } from "../src/data/domains";
 
 /** Both the top and bottom TabBar render a button with this name; grab the first. */
@@ -60,7 +60,7 @@ describe("App", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: /working with AI as a disciplined collaborator/i,
+        name: /built by directing AI agents, under rules I write/i,
       }),
     ).toBeInTheDocument();
     for (const project of PROJECTS) {
@@ -68,9 +68,22 @@ describe("App", () => {
         screen.getByRole("heading", { level: 3, name: project.title }),
       ).toBeInTheDocument();
     }
-    expect(screen.getByText("Architecture first")).toBeInTheDocument();
-    expect(screen.getByText("Directed, not delegated")).toBeInTheDocument();
-    expect(screen.getByText("Verified before shipped")).toBeInTheDocument();
+    // The software tab replaces the three shared commitments with the process
+    // every project is built under: each step, and each rule with a link to
+    // the file where it is written.
+    for (const step of PROCESS_STEPS) {
+      expect(screen.getByRole("heading", { level: 3, name: step.title })).toBeInTheDocument();
+    }
+    for (const rule of PROCESS_RULES) {
+      expect(screen.getByText(rule.rule)).toBeInTheDocument();
+    }
+    const sources = screen.getAllByRole("link", { name: /AGENTS\.md|prompts\/|ADR 0007/ });
+    expect(sources).toHaveLength(PROCESS_RULES.length);
+    for (const link of sources) {
+      expect(link).toHaveAttribute("href", expect.stringMatching(/^https:\/\/github\.com\/JoelA510\//));
+    }
+    expect(screen.getByText(/no external security review has been conducted/i)).toBeInTheDocument();
+    expect(screen.queryByText("Architecture first")).toBeNull();
     expect(
       screen.getByRole("link", { name: "hire.joel.abraham@gmail.com" }),
     ).toBeInTheDocument();

@@ -405,7 +405,7 @@ export const HUB_CARDS: HubCard[] = [
     tabId: "software",
     teaser: "Production software built by directing AI agents through constraints defined up front.",
     blurb:
-      `${PROJECTS.length} apps (deployed production tools, an offline export-compliance tool, and a playable strategy-game prototype): architecture and test suites first, AI agents executing against them, human review before merge.`,
+      `${PROJECTS.length} projects (deployed production tools, an offline export-compliance tool, a playable strategy-game prototype, and the template they are built under): architecture and test suites first, AI agents executing against them, human review before merge.`,
     focus: "React · TypeScript · Supabase · AI-directed delivery",
   },
   {

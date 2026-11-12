@@ -1,45 +1,11 @@
-import { useEffect, useState } from "react";
 import { PORTFOLIO } from "../data/portfolio";
 
-function formatNow(now: Date): string {
-  return now.toLocaleString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
-
 /**
- * Locked footer: © → GitHub (tooltip), live clock centered,
+ * Locked footer: © → GitHub (tooltip), when the content was last revised,
  * availability → LinkedIn (tooltip).
  */
 export function Footer() {
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    let id: number | undefined;
-    const start = () => {
-      setNow(new Date());
-      id = window.setInterval(() => setNow(new Date()), 1000);
-    };
-    const stop = () => window.clearInterval(id);
-
-    // Don't tick a clock nobody's looking at — pause while the tab is
-    // hidden/backgrounded and refresh immediately on return.
-    if (!document.hidden) start();
-    const onVisibility = () => {
-      if (document.hidden) stop();
-      else start();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      stop();
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, []);
+  const year = new Date().getFullYear();
 
   return (
     <footer className="footer">
@@ -52,9 +18,9 @@ export function Footer() {
           rel="noreferrer"
           aria-label="GitHub profile"
         >
-          © {now.getFullYear()} {PORTFOLIO.name}
+          © {year} {PORTFOLIO.name}
         </a>
-        <span className="f-clock">Current as of {formatNow(now)}</span>
+        <span className="f-clock">Content last updated {PORTFOLIO.contentUpdated}</span>
         <a
           className="f-right tip"
           data-tip="LinkedIn"
