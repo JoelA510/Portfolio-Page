@@ -17,12 +17,13 @@ const IFRAME_ALLOW =
 
 /**
  * One hairline-ruled case-study row: mono meta column (stack, AI tooling)
- * beside the plain-English body, with quiet text toggles for a lazy-loaded
- * live preview and an ASCII architecture diagram.
+ * beside a short plain-English summary, with quiet text toggles for the longer
+ * account, a lazy-loaded live preview, and an ASCII architecture diagram.
  */
 export function ProjectRow({ project, index }: Props) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [archOpen, setArchOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   // The iframe mounts on first open and stays mounted while hidden, so
   // re-opening the panel doesn't reload the embedded app.
   const [previewRequested, setPreviewRequested] = useState(false);
@@ -73,7 +74,7 @@ export function ProjectRow({ project, index }: Props) {
       <div className="p-body">
         <h3>{project.title}</h3>
         <p className="p-tag">{project.tagline}</p>
-        <p className="p-desc">{project.description}</p>
+        <p className="p-desc">{project.summary}</p>
         <p className="p-process">
           <strong>Process:</strong> {project.remediation}
         </p>
@@ -110,6 +111,15 @@ export function ProjectRow({ project, index }: Props) {
               {previewOpen ? "Hide preview" : "View preview"}
             </button>
           )}
+          <button
+            type="button"
+            className="p-toggle"
+            aria-expanded={detailsOpen}
+            aria-controls={`dt-${project.id}`}
+            onClick={() => setDetailsOpen((o) => !o)}
+          >
+            {detailsOpen ? "Hide details" : "Details"}
+          </button>
           <button
             type="button"
             className="p-toggle"
@@ -187,6 +197,9 @@ export function ProjectRow({ project, index }: Props) {
           </p>
         </div>
         )}
+        <div className="p-panel" id={`dt-${project.id}`} hidden={!detailsOpen}>
+          <p className="p-detail">{project.description}</p>
+        </div>
         <div className="p-panel" id={`ar-${project.id}`} hidden={!archOpen}>
           <pre className="p-arch">{project.architecture}</pre>
         </div>

@@ -24,6 +24,23 @@ describe("ProjectRow", () => {
     expect(screen.getByRole("button", { name: "Architecture" })).toBeInTheDocument();
   });
 
+  it("shows the short summary and keeps the longer account behind the Details toggle", async () => {
+    const user = userEvent.setup();
+    render(<ProjectRow project={project} index={0} />);
+
+    // The summary is what a skimming reader gets; the long description stays
+    // in the DOM (so it is searchable) but hidden until asked for.
+    expect(screen.getByText(project.summary)).toBeVisible();
+    expect(screen.getByText(project.description)).not.toBeVisible();
+
+    const toggle = screen.getByRole("button", { name: "Details" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await user.click(toggle);
+
+    expect(screen.getByText(project.description)).toBeVisible();
+    expect(screen.getByRole("button", { name: "Hide details" })).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("renders Source but no preview toggle for a project with a public repo and no deployment", () => {
     const sourceOnly = PROJECTS.find((p) => p.githubUrl && !p.liveUrl && !p.previewUrl);
     // An offline/desktop tool has a repository to read but nothing to embed;
