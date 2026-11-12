@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { ProjectRow } from "../src/components/ProjectRow";
@@ -111,7 +111,13 @@ describe("ProjectRow", () => {
     expect(
       document.getElementById(`ar-${project.id}`),
     ).not.toHaveAttribute("hidden");
-    expect(screen.getByText(/SUPABASE BACKEND/)).toBeInTheDocument();
+    // Every node of every layer is drawn, in a list labelled for the project.
+    const diagram = screen.getByRole("list", { name: `${project.title} architecture, top to bottom` });
+    expect(diagram).toBeVisible();
+    expect(within(diagram).getAllByRole("listitem")).toHaveLength(project.architecture.length);
+    for (const node of project.architecture.flat()) {
+      expect(within(diagram).getByText(node.label)).toBeVisible();
+    }
   });
 
   it("shows a fallback with a live-site link if the preview never loads", async () => {

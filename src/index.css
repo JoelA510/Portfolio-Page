@@ -394,16 +394,29 @@ img, svg { max-width: 100%; }
 }
 .p-frame-release:hover, .p-frame-release:focus-visible { border-color: var(--ink-3); color: var(--ink); }
 .p-arch {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  line-height: 1.7;
-  color: var(--ink-2);
+  list-style: none; margin: 0; padding: 20px;
   background: var(--surface);
   border: 1px solid var(--rule);
-  padding: 20px 24px;
-  overflow-x: auto;
-  margin: 0;
+  display: flex; flex-direction: column; gap: 26px;
+  max-width: 620px;
 }
+.arch-layer { position: relative; display: flex; gap: 10px; }
+/* the arrow from the layer above */
+.arch-layer + .arch-layer::before {
+  content: "↓";
+  position: absolute; left: 50%; top: -24px; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 13px; line-height: 22px; color: var(--ink-3);
+}
+.arch-node {
+  flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 11px 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  text-align: center;
+}
+.arch-label { font-weight: 600; font-size: 14.5px; color: var(--ink); }
+.arch-note { font-size: 12.5px; line-height: 1.45; color: var(--ink-2); }
 
 /* ================= approach ================= */
 .approach-list { margin: 0; padding: 0; list-style: none; }
@@ -535,6 +548,11 @@ img, svg { max-width: 100%; }
   .theme-btn.tip:hover::after, .theme-btn.tip:focus-visible::after {
     transform: translateX(-50%) translateY(0);
   }
+  /* the footer's right-hand link sits against the page edge; a tooltip
+     centered on it sticks out past the edge and, even while invisible, widens
+     the page into a horizontal scroll on narrow windows. Anchor it right. */
+  .f-right.tip::after { left: auto; right: 0; transform: translateY(3px); }
+  .f-right.tip:hover::after, .f-right.tip:focus-visible::after { transform: translateY(0); }
 }
 
 /* ================= responsive ================= */
@@ -553,6 +571,8 @@ img, svg { max-width: 100%; }
   .tab-btn { font-size: 13px; padding: 6px 12px; }
 }
 @media (max-width: 480px) {
+  .arch-layer { flex-direction: column; }
+  .p-arch { padding: 14px; }
   .p-frame { aspect-ratio: 4 / 5; }
   .f-right span.f-avail-text { display: none; }
   .hero-links .btn { flex: 1 1 auto; justify-content: center; }

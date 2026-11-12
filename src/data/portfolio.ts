@@ -5,6 +5,10 @@ export type Trait = {
   description: string;
 };
 
+export type ArchNode = { label: string; note?: string };
+/** One row of the diagram; nodes in a layer sit side by side. */
+export type ArchLayer = ArchNode[];
+
 export type Project = {
   id: string;
   title: string;
@@ -17,8 +21,8 @@ export type Project = {
   aiStack: TechChip[];
   /** One-line "Process:" summary of the AI → test → review loop. */
   remediation: string;
-  /** ASCII architecture diagram, rendered in a <pre>. */
-  architecture: string;
+  /** Architecture, read top to bottom: each layer feeds the one below it. */
+  architecture: ArchLayer[];
   /** Absent when the project has no public deployment to embed. */
   previewUrl?: string;
   /** Absent when the source repository isn't public. */
@@ -144,28 +148,14 @@ export const PROJECTS: Project[] = [
     ],
     remediation:
       "AI works against always-on rules that forbid inferring any compliance value → the suite replays six real shipments against the SLIs filed for them → a failure is read as a rule violation, not a test to relax → one check command (typecheck, lint, tests, build) is the single gate, run identically in CI and by me before merge.",
-    architecture: `[CIPL PDF] ---> [TEXT + COORDINATES]
-                        |
-                        v
-                [FORMAT REGISTRY]
-                (detect -> parser)
-                        |
-                        v
-                  [RECONCILER]
-        (USD set · line join · grouping
-          totals must sum back)
-                |               |
-                v               v
-        [SCHEDULE B]      [ITEM LIBRARY]
-        (Census AES)      (weights · codes)
-                |               |
-                +-------+-------+
-                        v
-                [CARRIER ADAPTER]
-        (Nippon · CEVA · keying sheets)
-                        |
-                        v
-              [FILLED PDF, UNSIGNED]`,
+    architecture: [
+      [{ label: "Invoice and packing list", note: "PDF or workbook" }],
+      [{ label: "Format registry", note: "Detects the layout, picks its parser" }],
+      [{ label: "Reconciler", note: "Figures must sum back to the printed totals" }],
+      [{ label: "Schedule B check", note: "Census AES concordance" }, { label: "Item library", note: "Weights and codes" }],
+      [{ label: "Carrier adapter", note: "Nippon Express, CEVA, keying sheets" }],
+      [{ label: "Filled form", note: "Unsigned, for a person to review" }],
+    ],
     githubUrl: "https://github.com/JoelA510/FormWaypoint",
   },
   {
@@ -192,15 +182,13 @@ export const PROJECTS: Project[] = [
     ],
     remediation:
       "A plan is agreed before any change to the solver → the agent builds against it → the season regression set and six required checks run → an adversarial review → I approve the merge.",
-    architecture: `[USER INPUT] ---> [REACT 19 FRONTEND]
-                        |
-                        v
-                [ALGORITHMIC ENGINE]
-                (Roster Generation)
-                        |
-                        v
-                [SUPABASE BACKEND]
-                  (RLS Enforced)`,
+    architecture: [
+      [{ label: "Registration export" }],
+      [{ label: "Import validation", note: "Keeps allowlisted columns only" }],
+      [{ label: "Team generation", note: "Balanced rosters" }, { label: "Schedule generation", note: "Practices and games; published games stay pinned" }],
+      [{ label: "Audited RPCs", note: "Every state change is logged" }],
+      [{ label: "Postgres", note: "Row-level security on every table" }],
+    ],
     previewUrl: "https://squadlogic.secureyour.tech",
     githubUrl: "https://github.com/JoelA510/SquadLogic",
     liveUrl: "https://squadlogic.secureyour.tech/",
@@ -229,15 +217,13 @@ export const PROJECTS: Project[] = [
     ],
     remediation:
       "AI drafts RLS policies and RPCs → the local Supabase test suite runs → AI analyzes permission leaks → I review before any policy ships.",
-    architecture: `[CLIENT (React Native)] ---> [API GATEWAY (Supabase)]
-                                    |
-                            +-------+-------+
-                            |               |
-                            v               v
-                    [EDGE FUNCTIONS]  [POSTGRES DB]
-                            |               |
-                            v               v
-                    [AI SERVICES]     [RLS POLICIES]`,
+    architecture: [
+      [{ label: "CA Legislature archive", note: "Primary source" }, { label: "LegiScan", note: "Fallback" }, { label: "OpenStates", note: "Legislators and votes" }],
+      [{ label: "Scheduled Edge Functions", note: "Ingest, refresh status, sync votes" }],
+      [{ label: "Postgres", note: "Row-level security, pgvector" }, { label: "OpenAI", note: "Summaries and embeddings" }],
+      [{ label: "RPCs and row-level security", note: "Every client read and write is checked" }],
+      [{ label: "Expo app", note: "iOS, Android, web; anonymous sessions" }],
+    ],
     previewUrl: "https://www.ai-advocate.org/",
     githubUrl: "https://github.com/JoelA510/AIAdvocate",
     liveUrl: "https://www.ai-advocate.org/",
@@ -265,18 +251,12 @@ export const PROJECTS: Project[] = [
     ],
     remediation:
       "A gap found in one repository is proven failing there → generalized into a standard with a probe → the probe is tested against a planted defect → every repository is measured against it.",
-    architecture: `[PROMPTS + SKILLS + STANDARDS]
-                |
-                v
-        [process:apply script]
-     (updates only unedited files)
-                |
-                v
-        [TARGET REPOSITORY]
-                |
-                v
-      [CONFORMANCE SCORECARD]
-   (each standard: pass / fail / n/a)`,
+    architecture: [
+      [{ label: "Prompts" }, { label: "Workflow skills" }, { label: "Standards" }],
+      [{ label: "Delivery script", note: "Updates only the files the target has not edited" }],
+      [{ label: "Target repository" }],
+      [{ label: "Conformance scorecard", note: "Each standard: pass, fail, or not applicable" }],
+    ],
     githubUrl: "https://github.com/JoelA510/agent-ready-template",
     liveUrl: "https://joela510.github.io/agent-ready-template/",
   },
@@ -302,16 +282,11 @@ export const PROJECTS: Project[] = [
     ],
     remediation:
       "Agents work from task packets against a living spec → every change ships with updated Vitest/Playwright coverage and a development-log entry → axe checks the UI → I review before merge.",
-    architecture: `[SETUP FLOW] (seats · factions · map · seed)
-                        |
-                        v
-                [TYPED GAME CORE]
-        (hex map gen · turn engine · combat
-          cities · cards · resources)
-                |               |
-                v               v
-        [REACT 19 UI]   [AUTOSAVE + REPLAY]
-        (a11y-checked)    (localStorage)`,
+    architecture: [
+      [{ label: "Setup", note: "Seats, factions, map, seed" }],
+      [{ label: "Typed game core", note: "Map generation, turn engine, combat, cities, cards" }],
+      [{ label: "React UI", note: "Accessibility-checked" }, { label: "Autosave and replay", note: "Stored in the browser" }],
+    ],
     githubUrl: "https://github.com/JoelA510/helmets-clash-web",
   },
 ];
