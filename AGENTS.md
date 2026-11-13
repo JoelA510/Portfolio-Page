@@ -11,6 +11,13 @@ the files relevant to the requested change.
 - Preserve verified career claims. Do not invent metrics, credentials, job titles,
   production status, or test counts. Verify a changing project claim against its
   source repository, or ask for the missing fact.
+- `PORTFOLIO.contentUpdated` is the footer's "Content last updated" date, set by
+  hand. Change it in the same PR as any visible content change, and only then.
+- Architecture diagrams are data (`architecture` on each project), drawn by
+  `ProjectRow`; change the data, not the markup.
+- The software projects were built by directing AI agents under written rules. Keep
+  that stated; never present them as unaided coding. AI tooling lines name only
+  tools actually used on that project.
 - Do not copy private career records or unpublished material into this public
   repository without the owner's explicit authorization for that content.
 - Preserve keyboard navigation, tab behavior, theme behavior, and responsive
