@@ -175,9 +175,9 @@ export const PROJECTS: Project[] = [
       { name: "Vercel", description: "Hosting" },
     ],
     aiStack: [
-      { name: "Antigravity IDE", description: "Primary agent for boilerplate + scaffolding" },
-      { name: "Claude Code", description: "Pairing on roster + scheduling logic" },
-      { name: "GitHub Copilot", description: "Inline suggestions" },
+      { name: "Claude Code", description: "Primary coding agent; runs the adversarial review" },
+      { name: "OpenAI Codex", description: "First review on every pull request" },
+      { name: "Antigravity IDE", description: "Earlier development" },
       { name: "Vitest + Playwright BDD", description: "Behavioral specs that gate AI output" },
     ],
     remediation:
@@ -212,8 +212,9 @@ export const PROJECTS: Project[] = [
     aiStack: [
       { name: "OpenAI gpt-4o-mini", description: "Bilingual plain-language bill summaries" },
       { name: "text-embedding-3-small", description: "Semantic search over bill text" },
-      { name: "Antigravity IDE", description: "Primary agentic dev environment" },
-      { name: "Claude Code", description: "RLS policy + edge function authoring" },
+      { name: "Claude Code", description: "RLS policy + Edge Function authoring" },
+      { name: "OpenAI Codex", description: "Implementation + pull-request review" },
+      { name: "Antigravity IDE", description: "Earlier development" },
     ],
     remediation:
       "AI drafts RLS policies and RPCs → the local Supabase test suite runs → AI analyzes permission leaks → I review before any policy ships.",
