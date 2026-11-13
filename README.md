@@ -26,3 +26,8 @@ domain furthest from the rest of the work:
 ## Tech stack
 
 React 19, TypeScript, Vite, Tailwind CSS, Vitest, Vercel.
+
+## Security
+
+Report suspected vulnerabilities privately using [`SECURITY.md`](SECURITY.md).
+It covers this portfolio; linked applications have their own security policies.
