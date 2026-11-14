@@ -1,5 +1,8 @@
-/* Google Fonts are loaded via <link> in index.html so the browser can start
-   fetching them before the CSS bundle is parsed — avoids the @import waterfall. */
+/* Self-hosted variable fonts (latin subsets, SIL Open Font License): Public Sans for text,
+   Plus Jakarta Sans for headings, JetBrains Mono for metadata. No third-party font requests. */
+@font-face { font-family: 'Public Sans'; src: url('./assets/fonts/PublicSans-latin.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('./assets/fonts/PlusJakartaSans-latin.woff2') format('woff2'); font-weight: 200 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'JetBrains Mono'; src: url('./assets/fonts/JetBrainsMono-latin.woff2') format('woff2'); font-weight: 100 800; font-style: normal; font-display: swap; }
 
 /* ================= tokens ================= */
 :root {
@@ -7,18 +10,19 @@
   --surface: #F3F1EC;
   --ink: #1C1B18;
   --ink-2: #55534E;
-  --ink-3: #75746D;
+  --ink-3: #6F6E68;
   --rule: #E4E2DB;
   --rule-strong: #D6D3CA;
-  --accent: #4038C8;
-  --accent-hover: #2E27A3;
+  --accent: #2A6A6E;
+  --accent-hover: #1F5559;
   --ok: #1E7A46;
   --err: #B3261E;
   --err-bg: #FBEAE9;
   --err-border: #F1C6C3;
 
-  --sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --mono: 'Berkeley Mono', 'TX02Berkeley Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display: 'Plus Jakarta Sans', 'Public Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   --w: 1080px;
   --pad: clamp(20px, 4vw, 48px);
@@ -36,8 +40,8 @@
   --ink-3: #8A8880;
   --rule: #2B2A26;
   --rule-strong: #3A3833;
-  --accent: #8B85F0;
-  --accent-hover: #A6A1F5;
+  --accent: #7BC0C2;
+  --accent-hover: #9FD3D5;
   --ok: #4FB87E;
   --err: #F2B8B5;
   --err-bg: #3A1F1E;
@@ -67,6 +71,7 @@ a:hover { color: var(--accent-hover); text-decoration: underline; text-underline
 ::selection { background: var(--accent); color: var(--paper); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 button { font-family: inherit; }
+h1, h2, h3, .contact-head { font-family: var(--display); }
 img, svg { max-width: 100%; }
 
 .wrap { max-width: var(--w); margin: 0 auto; padding-left: var(--pad); padding-right: var(--pad); }
