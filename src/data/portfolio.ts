@@ -130,7 +130,7 @@ export const PROJECTS: Project[] = [
     summary:
       "Turns a commercial invoice and packing list into a completed carrier form without the shipment ever leaving the machine. It checks every figure against the totals printed on the document, and leaves a value blank before it will guess one.",
     description:
-      "Turns a combined commercial invoice and packing list into a completed carrier Shipper's Letter of Instruction without the shipment ever leaving the machine: the CIPL is parsed locally, the carrier's real blank form is filled locally, and there is no backend to send anything to. Three CIPL formats and two carrier adapters (Nippon Express, CEVA) ship today; FedEx and UPS get keying sheets ordered the way Ship Manager and WorldShip prompt, because a mismatched import map fails silently. Every Schedule B number is validated against the Census Bureau AES concordance, and every quantity, weight, and value has to sum back to the totals printed on the source before a form is generated. It also classifies lithium batteries for air and prepares a Shipper's Declaration for Dangerous Goods for a qualified person to check and sign; that output is marked unverified until someone does. What it refuses to do is the design: it never assigns EAR99 because no ECCN appeared, never converts an HTSUS number into a Schedule B number, and never treats a blank field as zero. Over a thousand tests hold that line, and the suites that replay six real shipments take their expected values from the SLIs a person filed by hand; it also ships as a Windows desktop build, where the desktop shell refreshes the Census dataset a browser is not allowed to fetch.",
+      "Turns a combined commercial invoice and packing list into a completed carrier Shipper's Letter of Instruction without the shipment ever leaving the machine: the CIPL is parsed locally, the carrier's real blank form is filled locally, and there is no backend to send anything to. Three CIPL formats and two carrier adapters (Nippon Express, CEVA) ship today; FedEx and UPS get keying sheets ordered the way Ship Manager and WorldShip prompt, because a mismatched import map fails silently. Every Schedule B number is validated against the Census Bureau AES concordance, and every quantity, weight, and value has to sum back to the totals printed on the source before a form is generated. It also classifies lithium batteries for air and prepares a Shipper's Declaration for Dangerous Goods for a qualified person to check and sign; that output is marked unverified until someone does. What it refuses to do is the design: it never assigns EAR99 because no ECCN appeared, never converts an HTSUS number into a Schedule B number, and never treats a blank field as zero. Over a thousand tests hold that line, and the suites that replay six real shipments take their expected values from the SLIs a person filed by hand; it also ships as a Windows desktop app, published as a portable executable and an installer, where the desktop shell refreshes the Census dataset a browser is not allowed to fetch.",
     tech: [
       { name: "React 19", description: "Review and output UI" },
       { name: "TypeScript", description: "Strict types across the domain layer, no escape hatches" },
@@ -157,6 +157,7 @@ export const PROJECTS: Project[] = [
       [{ label: "Filled form", note: "Unsigned, for a person to review" }],
     ],
     githubUrl: "https://github.com/JoelA510/FormWaypoint",
+    liveUrl: "https://formwaypoint.secureyour.tech/",
   },
   {
     id: "squadlogic",
@@ -169,14 +170,14 @@ export const PROJECTS: Project[] = [
     tech: [
       { name: "React 19", description: "Scheduling dashboard UI" },
       { name: "Vite 8", description: "Frontend build" },
-      { name: "TypeScript", description: "Strict types across the app" },
+      { name: "JavaScript (type-checked)", description: "JSX checked by the TypeScript compiler; Edge Functions in TypeScript" },
       { name: "Tailwind 4", description: "Styling on top of a custom design system" },
       { name: "Supabase", description: "Postgres + Edge Functions + Auth" },
       { name: "Vercel", description: "Hosting" },
     ],
     aiStack: [
       { name: "Claude Code", description: "Primary coding agent; runs the adversarial review" },
-      { name: "OpenAI Codex", description: "First review on every pull request" },
+      { name: "OpenAI Codex", description: "Implementation, and the first review on pull requests" },
       { name: "Antigravity IDE", description: "Earlier development" },
       { name: "Vitest + Playwright BDD", description: "Behavioral specs that gate AI output" },
     ],
