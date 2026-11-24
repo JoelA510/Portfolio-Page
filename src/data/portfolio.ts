@@ -141,6 +141,9 @@ export const PROJECTS: Project[] = [
       { name: "Tauri 2", description: "Windows desktop shell + Census dataset refresh" },
     ],
     aiStack: [
+      { name: "Claude Code", description: "Primary coding agent, working from agreed plans" },
+      { name: "OpenAI Codex", description: "Windows build verification and process upkeep" },
+      { name: "Antigravity IDE", description: "Earlier development" },
       { name: "AGENTS.md", description: "Always-on operating and project rules every coding agent reads first" },
       { name: "Agent Skills", description: "Named workflows for planning, root-causing, review, and pre-PR checks" },
       { name: "CI on every PR", description: "Typecheck, lint, tests, and build, plus the desktop shell's own checks on Windows" },
@@ -290,5 +293,6 @@ export const PROJECTS: Project[] = [
       [{ label: "React UI", note: "Accessibility-checked" }, { label: "Autosave and replay", note: "Stored in the browser" }],
     ],
     githubUrl: "https://github.com/JoelA510/helmets-clash-web",
+    liveUrl: "https://helmets-clash.secureyour.tech/",
   },
 ];

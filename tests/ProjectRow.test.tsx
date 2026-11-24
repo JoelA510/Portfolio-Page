@@ -42,15 +42,16 @@ describe("ProjectRow", () => {
   });
 
   it("renders Source but no preview toggle for a project with a public repo and no deployment", () => {
-    const sourceOnly = PROJECTS.find((p) => p.githubUrl && !p.liveUrl && !p.previewUrl);
-    // An offline/desktop tool has a repository to read but nothing to embed;
-    // the preview toggle must not appear with no URL behind it.
-    expect(sourceOnly).toBeDefined();
-    render(<ProjectRow project={sourceOnly!} index={0} />);
+    // Every project in the data now has a deployment, so the case is built here: a
+    // repository to read but nothing to link or embed. The preview toggle must not
+    // appear with no URL behind it.
+    const sourceOnly = { ...project, liveUrl: undefined, previewUrl: undefined };
+    expect(sourceOnly.githubUrl).toBeDefined();
+    render(<ProjectRow project={sourceOnly} index={0} />);
 
     expect(screen.getByRole("link", { name: /Source/i })).toHaveAttribute(
       "href",
-      sourceOnly!.githubUrl,
+      sourceOnly.githubUrl,
     );
     expect(screen.queryByRole("link", { name: /Live site/i })).toBeNull();
     expect(screen.queryByRole("button", { name: /preview/i })).toBeNull();
