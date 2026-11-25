@@ -25,6 +25,56 @@ the files relevant to the requested change.
 - Keep changes focused; do not add analytics, forms that transmit data, or a backend
   as an incidental part of a copy or layout task.
 
+## Updating content
+
+The career facts shown here come from the owner's private record, which is not
+in this repository. That record is the authority when the two differ, and it is
+updated before this site is.
+
+1. Confirm the fact at its source first. Without access to the owner's record,
+   change only what the request states, and do not extend, round, or rephrase a
+   claim beyond it. For a project fact (release, test count, stack, tooling),
+   re-check the project's repository and say which commit was read.
+2. Find every place the claim appears before editing; search the whole checkout
+   for the old wording:
+   - `src/data/portfolio.ts` and `src/data/domains.ts` (a job shown on several
+     tabs is written once per tab);
+   - copy still written in components: the contact notes
+     (`ContactSection.tsx`), the footer availability line (`Footer.tsx`), and
+     the software tab's hero (`SoftwareSection.tsx`);
+   - `index.html` (title, description, keywords, social-card text);
+   - `public/og-image.svg`, `public/sitemap.xml`, `public/robots.txt`;
+   - `README.md`, `metadata.json`, and tests that quote content.
+3. Set `PORTFOLIO.contentUpdated` in the same change.
+4. For every number and date on a changed line, state where it was confirmed.
+   Remove a number that cannot be confirmed; do not soften it into a vaguer
+   claim.
+5. Run the gates below, then look at each changed tab in light and dark at a
+   narrow and a wide width.
+6. Commit and pull-request text describe the change itself. They never quote
+   the private record or give a private reason for the change.
+
+## Reusing this site for another person
+
+The site can serve as the starting point for someone else's portfolio. Do this
+only at the owner's request, and keep the new site unpublished until the person
+it describes has reviewed it.
+
+- Create a new repository from this one as a template rather than a fork, so
+  no commit history carries over, and keep it private until launch.
+- Replace all content: both files in `src/data/`, the component copy listed
+  above, `index.html`, everything in `public/`, `README.md`, `SECURITY.md`
+  (contact and linked policies), `metadata.json`, the `name` in `package.json`,
+  and the tests that assert a specific email, link, or certification.
+- The tab set is typed (`TabId`, `TABS`, and `DOMAINS` in `src/data/domains.ts`,
+  plus the software tab's own section in `src/App.tsx`). A different set of
+  tabs means changing those together and updating the tests.
+- Before the first commit, search the new checkout for the previous person's
+  name, email, handles, domain, employers, and project names. Nothing may
+  remain.
+- Every claim on the new site needs the same confirmation as in "Updating
+  content". Do not carry over a sentence because it reads well.
+
 ## Verification
 
 The CI workflow is [ci.yml](.github/workflows/ci.yml). It uses Node 22 and `npm ci`,
